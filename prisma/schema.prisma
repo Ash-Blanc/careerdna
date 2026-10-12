@@ -1,0 +1,253 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String?
+  avatarUrl   String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  profile     Profile?
+  chatThreads ChatThread[]
+
+  @@map("users")
+}
+
+model Profile {
+  id               String          @id @default(cuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  educationLevel   String          // High School, Undergraduate, Graduate, Bootcamp, Self-Taught
+  major            String?
+  location         String?
+  currentSkills    String          // JSON array of strings
+  weeklyHours      Int             @default(15)
+  budgetConstraint String          // "Zero / Free only", "Low (<$50/mo)", "Moderate", "Flexible"
+  careerConcerns   String?         // Student goals and anxieties
+  githubUrl        String?
+  resumeText       String?
+  portfolioUrl     String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  interests        Interest[]
+  tasteProfiles    TasteProfile[]
+  selectedCareers  SelectedCareer[]
+  roadmaps         Roadmap[]
+
+  @@map("profiles")
+}
+
+model Interest {
+  id             String    @id @default(cuid())
+  profileId      String
+  profile        Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  category       String    // "games", "anime", "football", "music", etc.
+  name           String    // e.g. "Elden Ring", "Arsenal FC", "Lo-Fi Beats"
+  subcategory    String?
+  affinityWeight Float     @default(1.0)
+  isCustom       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+
+  @@index([profileId])
+  @@index([category])
+  @@map("interests")
+}
+
+model TasteProfile {
+  id                    String         @id @default(cuid())
+  profileId             String
+  profile               Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  clusterSummary        String         // High-level taste synthesis
+  coreMotivations       String         // JSON array: ["building", "optimizing", "competing"]
+  cognitiveStyles       String         // JSON array: ["systems thinking", "pattern recognition"]
+  workStylePreferences String         // JSON array: ["deep focus", "high agency"]
+  culturalAffinities    String         // JSON object of Qloo affinities
+  qlooEntityIds         String?        // JSON array of resolved Qloo URNs
+  isDegradedMode        Boolean        @default(false)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  careerOptions         CareerOption[]
+
+  @@index([profileId])
+  @@map("taste_profiles")
+}
+
+model CareerOption {
+  id                  String          @id @default(cuid())
+  tasteProfileId      String
+  tasteProfile        TasteProfile    @relation(fields: [tasteProfileId], references: [id], onDelete: Cascade)
+  trackKey            String          // e.g. "ai-ml-engineer", "game-systems-engineer"
+  title               String
+  fitScore            Int             // 0 - 100
+  reasoning           String          // Direct taste-to-career connection
+  riskAnalysis        String          // Real-world trade-offs and realities
+  requiredSkills      String          // JSON array of skills
+  entryRoles          String          // JSON array of entry-level titles
+  portfolioIdeas      String          // JSON array of starter project ideas
+  recommendedNextMove String
+  demandTier          String          // "High Demand", "Differentiated", "Founder"
+  createdAt           DateTime        @default(now())
+
+  selectedCareers     SelectedCareer[]
+  roadmaps            Roadmap[]
+
+  @@index([tasteProfileId])
+  @@index([trackKey])
+  @@map("career_options")
+}
+
+model SelectedCareer {
+  id             String       @id @default(cuid())
+  profileId      String
+  profile        Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  careerOptionId String
+  careerOption   CareerOption @relation(fields: [careerOptionId], references: [id], onDelete: Cascade)
+  status         String       @default("EXPLORING") // EXPLORING, COMMITTED, COMPLETED
+  selectedAt     DateTime     @default(now())
+
+  @@index([profileId])
+  @@map("selected_careers")
+}
+
+model Roadmap {
+  id                 String             @id @default(cuid())
+  profileId          String
+  profile            Profile            @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  careerOptionId     String
+  careerOption       CareerOption       @relation(fields: [careerOptionId], references: [id], onDelete: Cascade)
+  title              String
+  summary            String
+  totalDurationWeeks Int                @default(12)
+  targetRole         String
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  items              RoadmapItem[]
+  portfolioProjects  PortfolioProject[]
+  resources          Resource[]
+
+  @@index([profileId])
+  @@index([careerOptionId])
+  @@map("roadmaps")
+}
+
+model RoadmapItem {
+  id           String    @id @default(cuid())
+  roadmapId    String
+  roadmap      Roadmap   @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  phase        String    // "30_DAYS", "60_DAYS", "90_DAYS"
+  weekNumber   Int       // 1 to 12
+  title        String
+  description  String
+  deliverables String    // JSON array of concrete weekly deliverables
+  resources    String    // JSON array of recommended tools/links
+  status       String    @default("TODO") // TODO, IN_PROGRESS, COMPLETED
+  orderIndex   Int       @default(0)
+  updatedAt    DateTime  @updatedAt
+
+  @@index([roadmapId])
+  @@index([phase])
+  @@map("roadmap_items")
+}
+
+model PortfolioProject {
+  id                String    @id @default(cuid())
+  roadmapId         String
+  roadmap           Roadmap   @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  title             String
+  goal              String
+  features          String    // JSON array of features
+  techStack         String    // JSON array of technologies
+  timelineWeeks     Int       @default(3)
+  difficulty        String    // Beginner, Intermediate, Advanced
+  whyFitReason      String    // Why this specific project fits their taste
+  starterMilestones String    // JSON array of milestone tasks
+  createdAt         DateTime  @default(now())
+
+  @@index([roadmapId])
+  @@map("portfolio_projects")
+}
+
+model Resource {
+  id          String   @id @default(cuid())
+  roadmapId   String
+  roadmap     Roadmap  @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  category    String   // LEARNING, COMMUNITY, CREATOR, EVENT
+  title       String
+  url         String
+  description String
+  isFree      Boolean  @default(true)
+  tier        String   @default("ESSENTIAL") // ESSENTIAL, RECOMMENDED, OPTIONAL
+  tags        String   // JSON array of strings
+
+  @@index([roadmapId])
+  @@map("resources")
+}
+
+model ChatThread {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String       @default("Career Strategy Session")
+  status    String       @default("ACTIVE") // ACTIVE, ARCHIVED
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  messages  Message[]
+
+  @@index([userId])
+  @@map("chat_threads")
+}
+
+model Message {
+  id            String      @id @default(cuid())
+  threadId      String
+  thread        ChatThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  role          String      // "user", "assistant", "system", "tool"
+  content       String      // Markdown message text
+  componentSpec String?     // JSON: { component: string, props: object } (Tambo generative UI)
+  createdAt     DateTime    @default(now())
+
+  toolCalls     ToolCall[]
+
+  @@index([threadId])
+  @@map("messages")
+}
+
+model ToolCall {
+  id              String    @id @default(cuid())
+  messageId       String
+  message         Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  toolName        String
+  inputArgs       String    // JSON
+  outputResult    String    // JSON
+  status          String    @default("SUCCESS") // SUCCESS, ERROR
+  executionTimeMs Int       @default(0)
+  createdAt       DateTime  @default(now())
+
+  @@index([messageId])
+  @@map("tool_calls")
+}
+
+model QlooCache {
+  id          String   @id @default(cuid())
+  cacheKey    String   @unique
+  endpoint    String
+  requestHash String
+  responseBody String  // JSON
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([cacheKey])
+  @@index([expiresAt])
+  @@map("qloo_cache")
+}

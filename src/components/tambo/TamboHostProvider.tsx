@@ -151,16 +151,35 @@ export function TamboHostProvider({
     setMessages([]);
   }, []);
 
-  const renderComponent = useCallback((spec: ComponentSpec) => {
-    const Component = REGISTERED_COMPONENTS[spec.component];
+  const renderComponent = useCallback((spec: any) => {
+    if (!spec) return null;
+    let parsed: any = spec;
+    if (typeof spec === "string") {
+      try {
+        parsed = JSON.parse(spec);
+      } catch (err) {
+        console.error("Failed to parse componentSpec JSON:", err);
+        return null;
+      }
+    }
+    if (!parsed || !parsed.component) return null;
+    const Component = REGISTERED_COMPONENTS[parsed.component];
     if (!Component) {
       return (
-        <div className="rounded-lg border border-red-900 bg-red-950/20 p-3 text-xs text-red-300">
-          Unknown Tambo component: {spec.component}
+        <div className="rounded-lg border border-red-900/50 bg-red-950/20 p-3 text-xs text-red-300">
+          Component not found: {parsed.component}
         </div>
       );
     }
-    return <Component {...spec.props} />;
+    let props = parsed.props || {};
+    if (typeof props === "string") {
+      try {
+        props = JSON.parse(props);
+      } catch {
+        props = {};
+      }
+    }
+    return <Component {...props} />;
   }, []);
 
   return (

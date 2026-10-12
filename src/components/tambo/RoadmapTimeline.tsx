@@ -11,6 +11,12 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
   const [phases, setPhases] = useState(props?.phases || []);
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
 
+  React.useEffect(() => {
+    if (props?.phases && props.phases.length > 0) {
+      setPhases(props.phases);
+    }
+  }, [props?.phases]);
+
   if (!props || phases.length === 0) {
     return (
       <div className="my-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 text-center text-sm text-neutral-400">

@@ -12,6 +12,7 @@ import {
   Clock,
   Layers,
 } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
 
 export const dynamic = "force-dynamic";
 
@@ -105,9 +106,10 @@ export default async function DashboardPage() {
               const progressPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
               return (
-                <div
+                <SpotlightCard
                   key={rm.id}
-                  className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 flex flex-col justify-between hover:border-neutral-700 transition-all"
+                  spotlightColor="rgba(16, 185, 129, 0.15)"
+                  className="rounded-2xl border-neutral-800 bg-neutral-900/60 p-5 flex flex-col justify-between hover:border-emerald-500/30 transition-all"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-2">
@@ -149,7 +151,7 @@ export default async function DashboardPage() {
                       <ArrowRight className="h-3 w-3" />
                     </Link>
                   </div>
-                </div>
+                </SpotlightCard>
               );
             })}
           </div>
@@ -172,9 +174,10 @@ export default async function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {careerOptions.map((opt) => (
-              <div
+              <SpotlightCard
                 key={opt.id}
-                className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 p-4 hover:border-neutral-700 transition-all flex flex-col justify-between"
+                spotlightColor="rgba(99, 102, 241, 0.15)"
+                className="rounded-2xl border-neutral-800/80 bg-neutral-900/50 p-4 hover:border-indigo-500/30 transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between text-xs font-semibold mb-2">
@@ -195,7 +198,7 @@ export default async function DashboardPage() {
                     Discuss in Coach →
                   </Link>
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
         )}

@@ -114,6 +114,30 @@ function CoachChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quick Action Suggestion Chips */}
+      <div className="flex items-center gap-1.5 overflow-x-auto px-4 py-2 border-t border-neutral-850/60 bg-neutral-950/40">
+        <span className="text-[10px] uppercase font-bold text-neutral-500 tracking-wider shrink-0 mr-1">
+          Quick Actions:
+        </span>
+        {[
+          { label: "🗺️ Explore Career Taste Map", prompt: "Show me my Career Taste Map with 5 ranked directions" },
+          { label: "⚖️ Compare Career Trade-offs", prompt: "Show me the comparison table of my recommended career paths" },
+          { label: "📚 Free Learning Resources", prompt: "Find me the best free learning resources and communities" },
+          { label: "🔍 Deep Dive Reality Check", prompt: "Give me a deep dive into day-to-day work, entry roles, and salary realities" },
+          { label: "🧬 Refresh Cultural Profile", prompt: "Show my taste profile and cultural affinities" },
+        ].map((chip, idx) => (
+          <button
+            key={idx}
+            type="button"
+            disabled={isStreaming}
+            onClick={() => sendMessage(chip.prompt)}
+            className="rounded-lg bg-neutral-900 border border-neutral-800 hover:border-indigo-500/40 hover:bg-neutral-850 px-2.5 py-1 text-[11px] font-medium text-neutral-300 hover:text-white transition-all whitespace-nowrap disabled:opacity-40"
+          >
+            {chip.label}
+          </button>
+        ))}
+      </div>
+
       {/* Chat Input Bar */}
       <div className="border-t border-neutral-800/80 bg-neutral-950/90 p-4 backdrop-blur-md">
         <form onSubmit={handleSubmit} className="relative flex items-center">

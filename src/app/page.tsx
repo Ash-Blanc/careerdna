@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -14,16 +16,36 @@ import {
   Layers,
   ChevronRight,
   TrendingUp,
+  Brain,
+  Rocket,
+  Shield,
+  FolderGit2,
 } from "lucide-react";
+import { Marquee } from "@/components/ui/21st/Marquee";
+import { ShimmerButton } from "@/components/ui/21st/ShimmerButton";
+import { BentoGrid, BentoCard } from "@/components/ui/21st/BentoGrid";
+import { AnimatedGradientText } from "@/components/ui/21st/AnimatedGradientText";
+import { BorderBeam } from "@/components/ui/21st/BorderBeam";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
 
 export default function LandingPage() {
+  const samplePassions = [
+    { icon: Gamepad2, label: "Elden Ring & Speedrunning", cat: "Games" },
+    { icon: Trophy, label: "Premier League & xG Telemetry", cat: "Sports" },
+    { icon: Code2, label: "Neovim & Terminal Ricing", cat: "Tech" },
+    { icon: Film, label: "Attack on Titan & Cyberpunk", cat: "Anime" },
+    { icon: Music, label: "Lo-Fi Beats & Sound Synthesis", cat: "Music" },
+    { icon: Rocket, label: "Y Combinator & Indie Hacking", cat: "Startups" },
+    { icon: Sparkles, label: "Dieter Rams & Linear UI", cat: "Design" },
+  ];
+
   return (
     <div className="relative overflow-hidden">
       {/* Background radial glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[500px] w-[800px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/10 to-pink-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[550px] w-[900px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/10 to-pink-500/5 blur-[140px] pointer-events-none" />
 
       {/* Hero Section */}
-      <section className="relative mx-auto max-w-6xl px-4 pt-20 pb-16 sm:px-6 lg:px-8 text-center">
+      <section className="relative mx-auto max-w-6xl px-4 pt-20 pb-12 sm:px-6 lg:px-8 text-center">
         {/* Pill Announcement */}
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-300 shadow-sm backdrop-blur-sm mb-6">
           <Sparkles className="h-3.5 w-3.5" />
@@ -32,13 +54,9 @@ export default function LandingPage() {
           <span className="text-neutral-300">Powered by Qloo & Tambo</span>
         </div>
 
-        {/* Main Heading */}
+        {/* Main Heading with Animated Gradient Text */}
         <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl max-w-4xl mx-auto leading-tight">
-          Your taste is{" "}
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
-            evidence
-          </span>
-          , not a distraction.
+          Your taste is <AnimatedGradientText>evidence</AnimatedGradientText>, not a distraction.
         </h1>
 
         {/* Subtitle */}
@@ -48,26 +66,30 @@ export default function LandingPage() {
           plan.
         </p>
 
-        {/* CTAs */}
+        {/* CTAs with 21st.dev ShimmerButton */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/onboarding"
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/25 hover:from-indigo-500 hover:to-purple-500 hover:scale-102 transition-all"
-          >
-            <span>Start Free Intake (2 mins)</span>
-            <ArrowRight className="h-4 w-4" />
+          <Link href="/onboarding">
+            <ShimmerButton
+              shimmerColor="#ffffff"
+              shimmerDuration="3s"
+              borderRadius="14px"
+              className="px-7 py-3.5 text-sm font-bold"
+            >
+              <span>Start Free Intake (2 mins)</span>
+              <ArrowRight className="h-4 w-4" />
+            </ShimmerButton>
           </Link>
 
           <Link
             href="/coach"
-            className="flex items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-900/80 px-6 py-3.5 text-sm font-semibold text-neutral-200 hover:bg-neutral-800 hover:text-white transition-all"
+            className="flex items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-900/80 px-6 py-3.5 text-sm font-semibold text-neutral-200 hover:bg-neutral-800 hover:text-white transition-all backdrop-blur-sm"
           >
             <span>Test Live Coach Demo</span>
           </Link>
         </div>
 
         {/* Badges / Metrics */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
             No generic chatbot quizzes
@@ -83,9 +105,97 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Interactive Transformation Teaser */}
+      {/* 21st.dev Marquee Cultural Passions Ticker */}
+      <div className="py-6 border-y border-neutral-800/60 bg-neutral-950/40 backdrop-blur-sm">
+        <Marquee pauseOnHover className="[--duration:25s]">
+          {samplePassions.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={idx}
+                className="flex items-center gap-2 rounded-xl border border-neutral-800 bg-neutral-900/70 px-4 py-2 text-xs font-medium text-neutral-200 hover:border-indigo-500/40 transition-colors"
+              >
+                <Icon className="h-4 w-4 text-indigo-400" />
+                <span>{item.label}</span>
+                <span className="rounded bg-neutral-800 px-1.5 py-0.2 text-[10px] text-neutral-400">
+                  {item.cat}
+                </span>
+              </div>
+            );
+          })}
+        </Marquee>
+      </div>
+
+      {/* 21st.dev Bento Grid Feature Showcase */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+            Engineered for High-Agency Students
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
+            Everything you need to go from cultural passions to hired
+          </h2>
+        </div>
+
+        <BentoGrid>
+          <BentoCard
+            name="Qloo Cultural Taste Stratum"
+            description="Extracts latent cognitive motivations, systems reasoning, and high APM competitive reflexes from what you actually consume."
+            Icon={Brain}
+            href="/onboarding"
+            cta="Explore Taste Engine"
+            className="md:col-span-2"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/20 via-transparent to-transparent opacity-80" />
+            }
+          />
+
+          <BentoCard
+            name="Tambo Generative UI"
+            description="The agent renders 10 interactive React components directly in the stream—no walls of raw JSON."
+            Icon={Sparkles}
+            href="/coach"
+            cta="Try Agent Coach"
+            className="md:col-span-1"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-950/20 via-transparent to-transparent opacity-80" />
+            }
+          />
+
+          <BentoCard
+            name="Signature Portfolio Projects"
+            description="Concrete, impressive starter projects complete with tech stack, user stories, and milestone sprints."
+            Icon={FolderGit2}
+            href="/onboarding"
+            cta="See Project Blueprints"
+            className="md:col-span-1"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-950/20 via-transparent to-transparent opacity-80" />
+            }
+          />
+
+          <BentoCard
+            name="30/60/90-Day Action Roadmap"
+            description="12 weekly deliverables, free/open-source learning resources, and 1-click export to Markdown and PDF."
+            Icon={Compass}
+            href="/coach"
+            cta="Build Your 90-Day Plan"
+            className="md:col-span-2"
+            background={
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-950/20 via-transparent to-transparent opacity-80" />
+            }
+          />
+        </BentoGrid>
+      </section>
+
+      {/* Interactive Transformation Teaser with SpotlightCard & BorderBeam */}
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <SpotlightCard
+          spotlightColor="rgba(99, 102, 241, 0.2)"
+          className="relative rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-10 shadow-2xl backdrop-blur-md"
+        >
+          <BorderBeam size={300} duration={10} colorFrom="#6366f1" colorTo="#ec4899" />
+
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
               Beyond Superficial Stereotypes
@@ -174,62 +284,29 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 10 Generative UI Showcase */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-semibold uppercase tracking-wider text-purple-400">
-            Agentic Generative UI
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            Real React Components, Not Endless Paragraphs
-          </h2>
-          <p className="text-xs sm:text-sm text-neutral-400 mt-2">
-            The Tambo layer renders 10 interactive UI surfaces directly into the conversation stream.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-center">
-          {[
-            { name: "TasteProfileCard", desc: "Motivations & cultural signals" },
-            { name: "CareerTasteMap", desc: "4-6 ranked directions" },
-            { name: "CareerDeepDive", desc: "Day-to-day & salary reality" },
-            { name: "RoadmapTimeline", desc: "30/60/90-day checklist" },
-            { name: "PortfolioProjectCard", desc: "Signature starter project" },
-            { name: "ResourceList", desc: "Curated learning & creators" },
-            { name: "FollowUpQuestionCard", desc: "High-leverage inquiry chips" },
-            { name: "ComparisonTable", desc: "Trade-offs across tracks" },
-            { name: "QlooReasoningPanel", desc: "Evidence explanation panel" },
-            { name: "ExportRoadmapButton", desc: "1-click Markdown & PDF" },
-          ].map((item, idx) => (
-            <div key={idx} className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-3.5">
-              <div className="text-xs font-bold text-indigo-300 font-mono">{"<" + item.name + " />"}</div>
-              <div className="text-[11px] text-neutral-400 mt-1">{item.desc}</div>
-            </div>
-          ))}
-        </div>
+        </SpotlightCard>
       </section>
 
       {/* Final Call to Action */}
       <section className="mx-auto max-w-4xl px-4 py-20 text-center">
-        <div className="rounded-3xl bg-gradient-to-tr from-indigo-950/60 via-purple-950/40 to-neutral-950 border border-indigo-500/30 p-8 sm:p-12 shadow-2xl">
+        <SpotlightCard
+          spotlightColor="rgba(168, 85, 247, 0.25)"
+          className="rounded-3xl border border-indigo-500/30 bg-neutral-950/80 p-8 sm:p-12 shadow-2xl"
+        >
           <h2 className="text-3xl font-bold text-white sm:text-4xl">Ready to discover your Career DNA?</h2>
           <p className="mt-3 text-sm text-neutral-300 max-w-xl mx-auto">
             Take 2 minutes to select your passions. Receive a personalized roadmap with weekly deliverables and a
             signature portfolio project.
           </p>
           <div className="mt-8 flex justify-center">
-            <Link
-              href="/onboarding"
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-indigo-600/30 hover:scale-105 transition-all"
-            >
-              <span>Get Started Now</span>
-              <ArrowRight className="h-4 w-4" />
+            <Link href="/onboarding">
+              <ShimmerButton className="px-8 py-4 text-sm font-bold">
+                <span>Get Started Now</span>
+                <ArrowRight className="h-4 w-4" />
+              </ShimmerButton>
             </Link>
           </div>
-        </div>
+        </SpotlightCard>
       </section>
     </div>
   );

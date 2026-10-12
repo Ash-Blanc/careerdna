@@ -1,22 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CareerTasteMapProps, CareerTasteMapPropsSchema } from "./registry";
-import { Compass, CheckCircle, ArrowRight, AlertTriangle, Layers, Flame } from "lucide-react";
+import { Compass, CheckCircle, ArrowRight, AlertTriangle, Layers, Flame, Filter } from "lucide-react";
 import { useTamboHost } from "./TamboHostProvider";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { BorderBeam } from "@/components/ui/21st/BorderBeam";
 
 export function CareerTasteMap(rawProps: CareerTasteMapProps) {
   const result = CareerTasteMapPropsSchema.safeParse(rawProps);
   const props = result.success ? result.data : rawProps;
   const { triggerAction } = useTamboHost();
+
   const [selectedId, setSelectedId] = useState<string | null>(props.selectedCareerId || null);
+  const [activeTier, setActiveTier] = useState<string>("ALL");
 
   const careerOptions = props?.careerOptions || [];
+
+  useEffect(() => {
+    if (props?.selectedCareerId) {
+      setSelectedId(props.selectedCareerId);
+    }
+  }, [props?.selectedCareerId]);
 
   if (careerOptions.length === 0) {
     return (
       <div className="my-4 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-6 text-center text-sm text-neutral-400">
-        Synthesizing career directions...
+        Synthesizing career directions from your taste graph...
       </div>
     );
   }
@@ -45,9 +55,13 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
     });
   };
 
+  const filteredOptions =
+    activeTier === "ALL" ? careerOptions : careerOptions.filter((c) => c.demandTier === activeTier);
+
   return (
     <div className="my-6 space-y-4">
-      <div className="flex items-center justify-between">
+      {/* Header and Filter Chips */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
             <Compass className="h-5 w-5 text-indigo-400" />
@@ -57,13 +71,31 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
             {careerOptions.length} ranked career directions aligned with your taste DNA
           </p>
         </div>
+
+        {/* Demand Tier Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          {["ALL", "High Demand", "Differentiated", "Founder"].map((tier) => (
+            <button
+              key={tier}
+              type="button"
+              onClick={() => setActiveTier(tier)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                activeTier === tier
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800"
+              }`}
+            >
+              {tier === "ALL" ? "All Tracks" : tier}
+            </button>
+          ))}
+        </div>
       </div>
 
+      {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {careerOptions.map((career) => {
+        {filteredOptions.map((career) => {
           const isSelected = selectedId === career.id;
 
-          // Color accents based on demand tier
           const tierBadgeColor =
             career.demandTier === "Founder"
               ? "bg-amber-500/10 text-amber-300 border-amber-500/30"
@@ -72,14 +104,17 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
               : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30";
 
           return (
-            <div
+            <SpotlightCard
               key={career.id}
-              className={`relative flex flex-col justify-between rounded-2xl border p-5 transition-all duration-200 ${
+              spotlightColor={isSelected ? "rgba(99, 102, 241, 0.25)" : "rgba(255, 255, 255, 0.08)"}
+              className={`relative flex flex-col justify-between rounded-2xl p-5 transition-all duration-300 ${
                 isSelected
-                  ? "border-indigo-500 bg-indigo-950/20 shadow-xl shadow-indigo-500/10 ring-1 ring-indigo-500/50"
+                  ? "border-indigo-500 bg-indigo-950/20 shadow-xl shadow-indigo-500/15 ring-1 ring-indigo-500/50"
                   : "border-neutral-800/80 bg-neutral-900/70 hover:border-neutral-700 hover:bg-neutral-900"
               }`}
             >
+              {isSelected && <BorderBeam size={220} duration={8} colorFrom="#6366f1" colorTo="#a855f7" />}
+
               {/* Card Header: Title & Fit Score */}
               <div>
                 <div className="flex items-start justify-between gap-3 mb-2.5">
@@ -90,7 +125,7 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
                     <h4 className="text-base font-semibold text-white leading-snug">{career.title}</h4>
                   </div>
 
-                  <div className="flex flex-col items-end">
+                  <div className="flex flex-col items-end shrink-0">
                     <div className="flex items-center gap-1 rounded-full bg-indigo-500/10 px-2.5 py-1 border border-indigo-500/20">
                       <Flame className="h-3.5 w-3.5 text-indigo-400" />
                       <span className="text-xs font-bold text-indigo-300">{career.fitScore}% Fit</span>
@@ -158,7 +193,7 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
                   )}
                 </button>
               </div>
-            </div>
+            </SpotlightCard>
           );
         })}
       </div>

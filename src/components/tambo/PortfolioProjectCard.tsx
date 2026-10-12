@@ -3,6 +3,7 @@
 import React from "react";
 import { PortfolioProjectCardProps, PortfolioProjectCardPropsSchema } from "./registry";
 import { FolderGit2, Sparkles, CheckCircle2, Clock, Code, Award } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
 
 export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
   const result = PortfolioProjectCardPropsSchema.safeParse(rawProps);
@@ -13,7 +14,10 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
   const { title, goal, features, techStack, timelineWeeks, difficulty, whyFitReason, starterMilestones } = props;
 
   return (
-    <div className="my-6 rounded-2xl border border-neutral-800 bg-gradient-to-b from-neutral-900 via-neutral-900/90 to-neutral-950 p-6 shadow-2xl backdrop-blur-md">
+    <SpotlightCard
+      spotlightColor="rgba(168, 85, 247, 0.18)"
+      className="my-6 border-neutral-800 bg-neutral-950/80 p-6 shadow-2xl backdrop-blur-md hover:border-purple-500/40"
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-4 mb-4">
         <div className="flex items-center gap-2.5">
@@ -104,6 +108,6 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
           </div>
         </div>
       )}
-    </div>
+    </SpotlightCard>
   );
 }

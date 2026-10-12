@@ -1,6 +1,7 @@
 import { CAREERDNA_SYSTEM_PROMPT } from "./careerdna-system-prompt";
 import { executeTool } from "./tool-executors";
 import { prisma } from "@/lib/db/prisma";
+import { CAREER_TRACKS } from "@/lib/taxonomy/career-tracks";
 
 export interface ChatMessage {
   id: string;
@@ -43,9 +44,6 @@ export class AgentOrchestrator {
     this.provider = process.env.LLM_PROVIDER || "mock";
   }
 
-  /**
-   * Run the agent with streaming generator yield
-   */
   public async *run(params: AgentRunParams): AsyncGenerator<AgentStreamChunk, void, unknown> {
     const { threadId, userId, messages, directAction } = params;
 
@@ -56,8 +54,16 @@ export class AgentOrchestrator {
         profile: {
           include: {
             interests: true,
-            tasteProfiles: { orderBy: { createdAt: "desc" }, take: 1 },
-            roadmaps: { orderBy: { createdAt: "desc" }, take: 1, include: { items: true } },
+            tasteProfiles: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              include: { careerOptions: true },
+            },
+            roadmaps: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+              include: { items: true, portfolioProjects: true, resources: true },
+            },
           },
         },
       },
@@ -65,25 +71,32 @@ export class AgentOrchestrator {
 
     const profile = user?.profile;
     const latestUserMsg = messages[messages.length - 1]?.content || "";
+    const lowerMsg = latestUserMsg.toLowerCase();
 
-    // 1. Handle DIRECT UI ACTIONS (e.g. user clicked "Select this path" on CareerTasteMap)
+    // 1. Handle DIRECT UI ACTIONS
     if (directAction) {
       if (directAction.type === "SELECT_CAREER") {
-        yield { type: "text", text: `Understood! You've selected **${directAction.payload.title}**. Let's build your concrete 30/60/90-day execution roadmap.\n\nAnalyzing skill gaps and structuring your weekly deliverables...` };
+        yield {
+          type: "text",
+          text: `Understood! You've selected **${directAction.payload.title}**. Let's build your concrete 30/60/90-day execution roadmap.\n\nAnalyzing skill gaps and structuring your weekly deliverables...`,
+        };
 
-        // Execute generate_roadmap tool
         const roadmapRes = await executeTool("generate_roadmap", {
           careerOptionId: directAction.payload.careerOptionId,
           weeklyHoursAvailable: profile?.weeklyHours || 15,
           budgetConstraint: profile?.budgetConstraint || "Free only",
         });
 
-        // Also fetch project card
         const projectRes = await executeTool("generate_portfolio_project", {
           roadmapId: roadmapRes.roadmapId,
         });
 
-        // Emit RoadmapTimeline component
+        const resourcesRes = await executeTool("find_resources", {
+          careerTrackKey: directAction.payload.trackKey || "ai-ml-engineer",
+          isFreeOnly: true,
+        });
+
+        // 1. Roadmap Timeline
         yield {
           type: "component",
           componentSpec: {
@@ -97,7 +110,7 @@ export class AgentOrchestrator {
           },
         };
 
-        // Emit PortfolioProjectCard component
+        // 2. Portfolio Project Card
         yield {
           type: "component",
           componentSpec: {
@@ -116,7 +129,19 @@ export class AgentOrchestrator {
           },
         };
 
-        // Emit ExportRoadmapButton
+        // 3. Resource List (Free & Community)
+        yield {
+          type: "component",
+          componentSpec: {
+            component: "ResourceList",
+            props: {
+              resources: resourcesRes.resources,
+              title: `Free Learning Resources & Communities for ${directAction.payload.title}`,
+            },
+          },
+        };
+
+        // 4. Export Roadmap Button
         yield {
           type: "component",
           componentSpec: {
@@ -133,7 +158,10 @@ export class AgentOrchestrator {
       }
 
       if (directAction.type === "DEEP_DIVE") {
-        yield { type: "text", text: `Here is the comprehensive reality breakdown for **${directAction.payload.title}**:` };
+        yield {
+          type: "text",
+          text: `Here is the comprehensive reality breakdown for **${directAction.payload.title}**:`,
+        };
 
         const deepDiveRes = await executeTool("explain_career_fit", {
           careerOptionId: directAction.payload.careerOptionId,
@@ -163,12 +191,10 @@ export class AgentOrchestrator {
 
     // 2. CONVERSATIONAL REASONING FLOW
     const msgCount = messages.filter((m) => m.role === "user").length;
-
-    // Check if taste profile has already been generated
     const existingTasteProfile = profile?.tasteProfiles[0];
 
+    // Turn 1: Build taste profile and ask initial high-leverage question
     if (!existingTasteProfile) {
-      // First turn: Build taste profile and ask initial high-leverage follow up question
       yield {
         type: "text",
         text: `Welcome to CareerDNA. I've analyzed your initial background and cultural interests. Let's look deeper into what actually excites you beyond surface labels.\n\nFirst, I've mapped your cultural signals through the taste graph:`,
@@ -194,7 +220,6 @@ export class AgentOrchestrator {
           },
         };
 
-        // Render QlooReasoningPanel
         yield {
           type: "component",
           componentSpec: {
@@ -210,7 +235,6 @@ export class AgentOrchestrator {
           },
         };
 
-        // Follow-up question (at most 3 questions rule)
         yield {
           type: "component",
           componentSpec: {
@@ -218,7 +242,8 @@ export class AgentOrchestrator {
             props: {
               questionId: "motivation_deepdive",
               question: "When you are completely lost in an activity, what is usually happening?",
-              contextReason: "To distinguish whether you thrive most on mechanical optimization, building from scratch, or strategic analysis.",
+              contextReason:
+                "To distinguish whether you thrive most on mechanical optimization, building from scratch, or strategic analysis.",
               options: [
                 { id: "optimizing", text: "Benchmarking & squeezing every ounce of efficiency" },
                 { id: "building", text: "Creating a tangible tool or project from scratch" },
@@ -235,8 +260,14 @@ export class AgentOrchestrator {
       return;
     }
 
-    // Turn 2 or onwards: Generate Career Taste Map
-    if (msgCount <= 2 || latestUserMsg.toLowerCase().includes("career") || latestUserMsg.toLowerCase().includes("options")) {
+    // Turn 2: Generate Career Taste Map & Comparison Table
+    if (
+      msgCount <= 2 ||
+      lowerMsg.includes("career") ||
+      lowerMsg.includes("options") ||
+      lowerMsg.includes("map") ||
+      lowerMsg.includes("direction")
+    ) {
       yield {
         type: "text",
         text: `Based on your taste profile and motivations, I have mapped 5 distinctive career directions. Notice that we balance high-demand foundational paths with high-leverage emerging specializations:`,
@@ -258,7 +289,6 @@ export class AgentOrchestrator {
         },
       };
 
-      // Comparison table
       yield {
         type: "component",
         componentSpec: {
@@ -282,11 +312,91 @@ export class AgentOrchestrator {
       return;
     }
 
-    // Fallback conversational turn
+    // Dynamic Intent Recognition for Interactive Components:
+    // A) Deep Dive request
+    if (lowerMsg.includes("deep dive") || lowerMsg.includes("day in") || lowerMsg.includes("salary") || lowerMsg.includes("detail")) {
+      const topOption = existingTasteProfile.careerOptions[0];
+      if (topOption) {
+        yield {
+          type: "text",
+          text: `Here is the reality check and day-in-the-life breakdown for **${topOption.title}**:`,
+        };
+        const deepDiveRes = await executeTool("explain_career_fit", {
+          careerOptionId: topOption.id,
+        });
+        yield {
+          type: "component",
+          componentSpec: {
+            component: "CareerDeepDive",
+            props: deepDiveRes,
+          },
+        };
+        yield { type: "done" };
+        return;
+      }
+    }
+
+    // B) Resources & Learning request
+    if (lowerMsg.includes("resource") || lowerMsg.includes("learn") || lowerMsg.includes("course") || lowerMsg.includes("book")) {
+      const topOption = existingTasteProfile.careerOptions[0];
+      const trackKey = topOption?.trackKey || "ai-ml-engineer";
+      yield {
+        type: "text",
+        text: `Here are the top free, high-leverage resources and communities for your recommended track:`,
+      };
+      const resRes = await executeTool("find_resources", {
+        careerTrackKey: trackKey,
+        isFreeOnly: true,
+      });
+      yield {
+        type: "component",
+        componentSpec: {
+          component: "ResourceList",
+          props: {
+            resources: resRes.resources,
+            title: `Curated Free Resources for ${topOption?.title || "Your Path"}`,
+          },
+        },
+      };
+      yield { type: "done" };
+      return;
+    }
+
+    // C) Comparison request
+    if (lowerMsg.includes("compare") || lowerMsg.includes("tradeoff") || lowerMsg.includes("versus") || lowerMsg.includes("vs")) {
+      yield {
+        type: "text",
+        text: `Here is a side-by-side strategic comparison of your top career tracks:`,
+      };
+      const opts = existingTasteProfile.careerOptions;
+      yield {
+        type: "component",
+        componentSpec: {
+          component: "ComparisonTable",
+          props: {
+            careers: opts.map((c) => ({
+              title: c.title,
+              fitScore: c.fitScore,
+              interestFit: "High Cultural Alignment",
+              skillLeverage: (JSON.parse(c.requiredSkills) as string[]).slice(0, 2).join(", "),
+              marketDemand: c.demandTier,
+              learningCurve: "2-3 Months Focused",
+              compPotential: c.demandTier === "Founder" ? "High / Uncapped" : "Tier 1 Market",
+              lifestyle: "Autonomous Deep Work",
+            })),
+          },
+        },
+      };
+      yield { type: "done" };
+      return;
+    }
+
+    // D) Fallback conversational guidance with active suggestion
     yield {
       type: "text",
-      text: `I'm tracking your progress. Which of the career tracks above would you like to explore deeper or generate a roadmap for? You can click "Select this path" on any card or ask me any question about compensation, day-to-day realities, or portfolio requirements.`,
+      text: `I'm tracking your preferences. You can:\n- Click **"Select Path"** on any card above to build your 30/60/90-day roadmap\n- Ask me to **"Compare paths"**\n- Ask for **"Free learning resources"**\n- Ask for a **"Deep dive into salary & reality"**`,
     };
+
     yield { type: "done" };
   }
 }

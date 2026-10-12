@@ -69,7 +69,7 @@ export function Navbar() {
 
         {/* Status indicator & CTA */}
         <div className="flex items-center gap-3">
-          {/* Qloo Status Pill */}
+          {/* Cultural Intelligence Status Pill */}
           <div className="hidden sm:flex items-center gap-1.5 rounded-full bg-neutral-900 border border-neutral-800 px-2.5 py-1 text-[11px] font-medium">
             <span
               className={`h-2 w-2 rounded-full ${
@@ -77,7 +77,7 @@ export function Navbar() {
               }`}
             />
             <span className="text-neutral-300">
-              {qlooMode === "live" ? "Qloo Live Graph" : "Cultural Engine"}
+              Cultural Intelligence Active
             </span>
           </div>
 

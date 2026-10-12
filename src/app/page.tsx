@@ -51,7 +51,7 @@ export default function LandingPage() {
           <Sparkles className="h-3.5 w-3.5" />
           <span>The Cultural Taste AI Career Coach</span>
           <span className="text-neutral-500">|</span>
-          <span className="text-neutral-300">Powered by Qloo & Tambo</span>
+          <span className="text-neutral-300">Evidence-Based Career Discovery</span>
         </div>
 
         {/* Main Heading with Animated Gradient Text */}
@@ -92,15 +92,15 @@ export default function LandingPage() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-neutral-400">
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            No generic chatbot quizzes
+            No generic personality tests
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            Qloo Cultural Affinity Mapping
+            Latent Motivation & Strength Decoding
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            Tambo Generative UI (No Raw JSON)
+            Actionable 30/60/90-Day Roadmaps
           </span>
         </div>
       </section>
@@ -139,8 +139,8 @@ export default function LandingPage() {
 
         <BentoGrid>
           <BentoCard
-            name="Qloo Cultural Taste Stratum"
-            description="Extracts latent cognitive motivations, systems reasoning, and high APM competitive reflexes from what you actually consume."
+            name="Cognitive Taste Intelligence"
+            description="Uncovers latent strengths, systems reasoning, competitive drive, and creative instincts hidden beneath what you genuinely enjoy."
             Icon={Brain}
             href="/onboarding"
             cta="Explore Taste Engine"
@@ -151,8 +151,8 @@ export default function LandingPage() {
           />
 
           <BentoCard
-            name="Tambo Generative UI"
-            description="The agent renders 10 interactive React components directly in the stream—no walls of raw JSON."
+            name="Interactive Visual Strategist"
+            description="No text walls or rigid forms. Receive rich interactive career maps, side-by-side trade-off matrices, and live timeline views."
             Icon={Sparkles}
             href="/coach"
             cta="Try Agent Coach"
@@ -231,11 +231,11 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Column 2: Qloo Engine */}
+            {/* Column 2: Decoded Signals */}
             <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/20 p-5 flex flex-col justify-between">
               <div>
                 <span className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider block mb-3">
-                  2. Qloo Latent Signals
+                  2. Decoded Latent Signals
                 </span>
                 <p className="text-xs text-neutral-300 leading-relaxed mb-3">
                   Infers underlying desire for <strong>systems optimization</strong>, <strong>spatial analytics</strong>

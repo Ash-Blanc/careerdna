@@ -17,27 +17,27 @@ export function Footer() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 text-neutral-400">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
-              Powered by Qloo & Tambo
+            <span className="flex items-center gap-1.5 text-neutral-400">
+              <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+              Evidence-based career discovery
             </span>
             <Link href="/onboarding" className="hover:text-white transition-colors">
-              Onboarding
+              Intake
             </Link>
             <Link href="/coach" className="hover:text-white transition-colors">
-              Coach Chat
+              AI Coach
             </Link>
             <Link href="/dashboard" className="hover:text-white transition-colors">
               Dashboard
             </Link>
             <Link href="/settings" className="hover:text-white transition-colors">
-              API Settings
+              Settings
             </Link>
           </div>
         </div>
 
         <div className="mt-8 border-t border-neutral-900 pt-6 text-center text-neutral-500 text-[11px]">
-          CareerDNA · Hackathon Edition · Built for students everywhere to discover high-agency careers through taste.
+          CareerDNA · Built for ambitious students to discover high-agency careers through genuine interests.
         </div>
       </div>
     </footer>

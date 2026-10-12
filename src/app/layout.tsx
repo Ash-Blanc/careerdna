@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 export const metadata: Metadata = {
   title: "CareerDNA — Taste-Aware AI Career Coach for Students",
   description:
-    "Convert your cultural passions (gaming, anime, football, music, creators, fashion) into high-leverage careers, signature portfolio projects, and a 30/60/90-day action plan with Qloo & Tambo Generative UI.",
+    "Convert your cultural passions (gaming, anime, football, music, creators, fashion) into high-leverage careers, signature portfolio projects, and an actionable 30/60/90-day plan.",
 };
 
 export default function RootLayout({

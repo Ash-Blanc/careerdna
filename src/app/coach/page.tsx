@@ -45,7 +45,7 @@ function CoachChatInterface() {
               CareerDNA Agent Session
               <span className="flex h-2 w-2 rounded-full bg-emerald-400" />
             </h2>
-            <p className="text-[11px] text-neutral-400">Cultural Taste Stratum · Tambo Generative UI Active</p>
+            <p className="text-[11px] text-neutral-400">Cultural Taste Intelligence · Adaptive Career Interface</p>
           </div>
         </div>
 
@@ -106,7 +106,7 @@ function CoachChatInterface() {
               <Sparkles className="h-4 w-4 animate-spin" />
             </div>
             <div className="text-xs text-neutral-400">
-              Agent is computing cultural affinities & rendering generative UI...
+              Agent is synthesizing taste signals & generating interactive career directions...
             </div>
           </div>
         )}
@@ -161,7 +161,7 @@ function CoachChatInterface() {
 
         <div className="mt-2 flex items-center justify-between text-[11px] text-neutral-500 px-1">
           <span>Tip: Click "Select Path" on any card above to generate a 30/60/90-day roadmap</span>
-          <span>Tambo Generative Engine</span>
+          <span>Adaptive Career Intelligence</span>
         </div>
       </div>
     </div>

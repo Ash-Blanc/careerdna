@@ -25,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       let md = `# ${roadmap.title}\n\n`;
       md += `> **Target Career:** ${roadmap.targetRole}  \n`;
       md += `> **Duration:** ${roadmap.totalDurationWeeks} Weeks  \n`;
-      md += `> **Generated with:** CareerDNA & Qloo Taste Intelligence\n\n`;
+      md += `> **Generated with:** CareerDNA Strategic Roadmaps\n\n`;
       md += `## Strategic Vision\n${roadmap.summary}\n\n`;
 
       if (roadmap.portfolioProjects.length > 0) {

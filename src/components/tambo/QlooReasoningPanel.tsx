@@ -21,8 +21,8 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
             <Network className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-white">Qloo Cultural Intelligence Influence</h4>
-            <p className="text-[11px] text-neutral-400">How your taste profile shaped our recommendations</p>
+            <h4 className="text-sm font-semibold text-white">Cultural Affinity Reasoning</h4>
+            <p className="text-[11px] text-neutral-400">How your taste profile and cultural signals shaped this direction</p>
           </div>
         </div>
 

@@ -2,15 +2,28 @@
 
 @layer base {
   :root {
-    --background: 10 10 12;
-    --foreground: 245 245 247;
+    --background: 9 9 11;
+    --foreground: 244 244 245;
   }
 
   body {
     background-color: #09090b;
     color: #f4f4f5;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: -apple-system, BlinkMacSystemFont, "Geist", "Inter", -ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.012em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+  }
+
+  code, pre, kbd, samp {
+    font-family: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-feature-settings: "calt" 1;
   }
 }
 

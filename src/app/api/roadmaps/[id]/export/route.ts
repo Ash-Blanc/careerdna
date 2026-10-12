@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
       if (roadmap.portfolioProjects.length > 0) {
         const proj = roadmap.portfolioProjects[0];
-        md += `## 🚀 Flagship Portfolio Project: ${proj.title}\n`;
+        md += `## Flagship Portfolio Project: ${proj.title}\n`;
         md += `**Goal:** ${proj.goal}\n\n`;
         md += `**Tech Stack:** ${(JSON.parse(proj.techStack) as string[]).join(", ")}\n\n`;
         md += `**Why It Fits You:** ${proj.whyFitReason}\n\n`;
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         md += `\n`;
       }
 
-      md += `## 🗓️ 12-Week Sprint Timeline\n\n`;
+      md += `## 12-Week Sprint Timeline\n\n`;
       for (const item of roadmap.items) {
         md += `### Week ${item.weekNumber}: ${item.title} [${item.status}]\n`;
         md += `${item.description}\n\n`;
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }
 
       if (roadmap.resources.length > 0) {
-        md += `## 📚 Recommended Free Resources & Communities\n\n`;
+        md += `## Recommended Free Resources & Communities\n\n`;
         roadmap.resources.forEach((r) => {
           md += `- **[${r.title}](${r.url})** (${r.category}) - ${r.description}\n`;
         });
@@ -91,7 +91,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 <body>
   <div class="no-print" style="margin-bottom: 20px;">
     <button onclick="window.print()" style="background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer;">
-      🖨️ Print to PDF
+      Print / Save as PDF
     </button>
   </div>
   <h1>${roadmap.title}</h1>

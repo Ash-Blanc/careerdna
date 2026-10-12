@@ -30,6 +30,7 @@ import {
   Clock,
   Play,
   RotateCcw,
+  Palette,
 } from "lucide-react";
 import { Marquee } from "@/components/ui/21st/Marquee";
 import { ShimmerButton } from "@/components/ui/21st/ShimmerButton";
@@ -43,7 +44,7 @@ interface DemoPersona {
   badge: string;
   name: string;
   role: string;
-  avatarSeed: string;
+  avatarIcon: React.ComponentType<{ className?: string }>;
   passions: { label: string; cat: string; icon: React.ComponentType<{ className?: string }> }[];
   inferredSignals: string[];
   careerMatch: {
@@ -82,7 +83,7 @@ export default function LandingPage() {
       badge: "Competitive Systems Archetype",
       name: "Alex",
       role: "CS Sophomore",
-      avatarSeed: "🎮",
+      avatarIcon: Gamepad2,
       passions: [
         { label: "Elden Ring Speedrunning", cat: "Games", icon: Gamepad2 },
         { label: "Premier League Tactics & xG", cat: "Sports", icon: Trophy },
@@ -113,7 +114,7 @@ export default function LandingPage() {
       badge: "Narrative & Creative Architect",
       name: "Maya",
       role: "Interactive Media Junior",
-      avatarSeed: "🎨",
+      avatarIcon: Palette,
       passions: [
         { label: "Cyberpunk 2077 & Sci-Fi", cat: "Anime & Film", icon: Film },
         { label: "Dieter Rams Design Principles", cat: "Design", icon: Sparkles },
@@ -144,7 +145,7 @@ export default function LandingPage() {
       badge: "Autonomy & Tooling Builder",
       name: "Dev",
       role: "Self-Taught Builder",
-      avatarSeed: "⚡",
+      avatarIcon: Zap,
       passions: [
         { label: "Modular Synths & Eurorack", cat: "Music", icon: Music },
         { label: "Y Combinator & Micro-SaaS", cat: "Startups", icon: Rocket },
@@ -308,20 +309,24 @@ export default function LandingPage() {
 
             {/* Persona Selector Tabs */}
             <div className="flex items-center gap-1.5 bg-neutral-900 p-1 rounded-xl border border-white/[0.06]">
-              {personas.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setActivePersonaId(p.id)}
-                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
-                    activePersonaId === p.id
-                      ? "bg-indigo-600 text-white shadow-sm"
-                      : "text-neutral-400 hover:text-white hover:bg-neutral-800"
-                  }`}
-                >
-                  <span>{p.avatarSeed}</span>
-                  <span className="hidden sm:inline">{p.name} ({p.role})</span>
-                </button>
-              ))}
+              {personas.map((p) => {
+                const AvatarIcon = p.avatarIcon;
+                const isActive = activePersonaId === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setActivePersonaId(p.id)}
+                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                      isActive
+                        ? "bg-indigo-600 text-white shadow-sm"
+                        : "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                    }`}
+                  >
+                    <AvatarIcon className={`h-3.5 w-3.5 ${isActive ? "text-white" : "text-indigo-400"}`} />
+                    <span className="hidden sm:inline">{p.name} ({p.role})</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -348,7 +353,7 @@ export default function LandingPage() {
                           <Icon className="h-4 w-4 text-indigo-400" />
                           <span className="font-medium">{p.label}</span>
                         </div>
-                        <span className="rounded bg-neutral-800 px-1.5 py-0.5 text-[10px] text-neutral-400">
+                        <span className="rounded bg-neutral-800 px-1.5 py-0.5 text-[10px] text-neutral-400 font-mono">
                           {p.cat}
                         </span>
                       </div>
@@ -369,9 +374,10 @@ export default function LandingPage() {
                   {currentPersona.inferredSignals.map((sig, idx) => (
                     <span
                       key={idx}
-                      className="rounded-lg bg-indigo-900/40 border border-indigo-500/30 px-2.5 py-1 text-[11px] font-medium text-indigo-200"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-900/40 border border-indigo-500/30 px-2.5 py-1 text-[11px] font-medium text-indigo-200"
                     >
-                      ✦ {sig}
+                      <Sparkles className="h-3 w-3 text-indigo-400 shrink-0" />
+                      <span>{sig}</span>
                     </span>
                   ))}
                 </div>
@@ -496,19 +502,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-4 text-sm text-neutral-400">
                 <li className="flex items-start gap-3">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <XCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
                   <span><strong>50-question Myers-Briggs tests</strong> that reduce your complex personality to rigid 4-letter archetypes.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <XCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
                   <span><strong>Superficial stereotype traps:</strong> "You like anime? Become an animator. You play games? Become a QA tester."</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <XCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
                   <span><strong>Cookie-cutter projects:</strong> Generic todo apps and weather widgets that hiring managers instantly reject.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <XCircle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
                   <span><strong>Vague, non-executable advice:</strong> "Network on LinkedIn and practice coding" with zero weekly milestones.</span>
                 </li>
               </ul>
@@ -531,19 +537,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-4 text-sm text-neutral-200">
                 <li className="flex items-start gap-3">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span><strong>Latent cognitive decoding:</strong> Pinpoints high-APM reflexes, systems reasoning, and spatial analysis beneath your cultural diet.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span><strong>High-leverage tech tracks:</strong> Matches your intrinsic motivation to Sports Analytics, Algorithmic Trading, Creative Tech, and AI/ML.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span><strong>Signature starter projects:</strong> Custom starter repositories with architecture diagrams, API specs, and domain relevance.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-emerald-400 font-bold">✓</span>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span><strong>30/60/90-Day execution sprint:</strong> 12 weekly deliverables with curated free resources and 1-click Markdown/PDF export.</span>
                 </li>
               </ul>

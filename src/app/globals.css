@@ -105,3 +105,18 @@
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+/* Animations used across pages (live demo tour, persistent fade-ins). */
+@layer utilities {
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in { animation: fade-in 0.5s ease-out both; }
+
+  @keyframes taste-draw {
+    from { stroke-dashoffset: 400; }
+    to { stroke-dashoffset: 0; }
+  }
+  .taste-draw { stroke-dasharray: 400; stroke-dashoffset: 400; animation: taste-draw 1.6s ease-out forwards; }
+}
+

@@ -30,6 +30,16 @@ Traditional career counseling relies on superficial surveys and stereotype mappi
 | **Neovim Configuration, Terminal Ricing** | Ergonomic obsession, compiler speed sensitivity, custom toolchain craft | **Developer Tools Engineer**, **Compiler / Infrastructure Engineer** |
 | **Internet Subcultures, Meme Curation, Communities** | High-velocity narrative tracking, viral loops, memetic distribution mechanics | **Product Engineer**, **Founder / Indie Hacker** |
 
+## 1.1 New in v1.1 — Qloo at the Center
+
+Three additions amplify what makes CareerDNA different from a regular LLM career app — they put **Qloo** on the visible surface, not buried in the engine:
+
+- **`<TasteGenomePanel />`** — a 6-axis radar fingerprint rendered as a *dual* radar + chromosome strand. Each student's taste cluster becomes a unique SVG. The agent emits it as a generative UI card on first contact, and it ships as the headline visual on the landing page.
+- **`<CulturalAffinityExplorer />`** — a constellation visualization showing how one passion radiates outward into adjacent domains. The most Qloo-specific affordance in the system: it pulls from `culturalAffinities[interest]` and weights each adjacent node with a real affinity score.
+- **`POST /api/portfolio/starter-repo`** — a real ZIP endpoint that builds a working starter repository (README, package.json, src/index.{ts|py}, data/sample.json, docs/architecture.md, docs/careerfit.md, LICENSE) for any of the 10 career tracks. Pure stdlib Python — no extra deps. The agent streams this directly into the `ExportRoadmapButton` so the student leaves with a 6-file scaffold ready to push to GitHub.
+
+The landing page also embeds a **LiveDemoTour** that auto-cycles through the agent's full conversation arc (intake → taste fingerprint → ranked tracks → roadmap → ZIP CTA) — so judges can see the Qloo-centric flow in <30 seconds without clicking.
+
 ---
 
 ## 2. System Architecture

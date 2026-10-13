@@ -38,6 +38,8 @@ import { BentoGrid, BentoCard } from "@/components/ui/21st/BentoGrid";
 import { AnimatedGradientText } from "@/components/ui/21st/AnimatedGradientText";
 import { BorderBeam } from "@/components/ui/21st/BorderBeam";
 import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { LiveDemoTour } from "@/components/LiveDemoTour";
+import { TasteGenome } from "@/components/TasteGenome";
 
 interface DemoPersona {
   id: string;
@@ -452,6 +454,78 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Watch it run, end-to-end (Live demo tour) */}
+      <section className="mx-auto max-w-6xl px-4 pt-6 pb-20 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+            Watch It Run, End-to-End
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-2">
+            A live, no-API-key demo of the CareerDNA agent
+          </h2>
+          <p className="text-sm text-neutral-400 mt-3">
+            Five micro-moments the agent streams to a real student: intake → Qloo
+            fingerprint → ranked career tracks → 12-week roadmap → downloadable
+            starter repo. The orbit auto-plays; press <em>Replay tour</em> to start over.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div>
+            <LiveDemoTour />
+          </div>
+          <div className="rounded-3xl border border-white/[0.08] bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-purple-300 font-semibold">
+                  Qloo Taste Fingerprint
+                </p>
+                <h3 className="text-xl font-bold text-white mt-1">
+                  Your taste → a 6-axis genome
+                </h3>
+              </div>
+              <span className="rounded-md bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-mono font-semibold text-emerald-300">
+                Qloo
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center my-4">
+              <TasteGenome
+                motivations={["optimizing", "competing", "analyzing"]}
+                cognitiveStyles={["spatial reasoning", "systems thinking"]}
+                seed="alex-demo"
+                size={240}
+                variant="dual"
+                caption="Live session · sample student"
+              />
+            </div>
+
+            <ul className="mt-4 grid grid-cols-2 gap-3 text-xs">
+              {[
+                { tone: "Optimizing · systems", color: "indigo" },
+                { tone: "Competing · APM", color: "rose" },
+                { tone: "Analyzing · telemetry", color: "cyan" },
+                { tone: "Building · 1h", color: "emerald" },
+              ].map((r, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-neutral-950/60 p-2.5"
+                >
+                  <span className="size-2 rounded-full bg-indigo-400" />
+                  <span className="text-neutral-200 font-medium capitalize">{r.tone}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-5 text-[11px] text-neutral-400 leading-snug italic">
+              The genome recomputes each session. With a Qloo API key it pulls from
+              250M+ cross-domain entities; in fallback mode it uses a local cultural
+              ontology covering 40+ interests.
+            </p>
           </div>
         </div>
       </section>

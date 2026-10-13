@@ -170,5 +170,48 @@ export type QlooReasoningPanelProps = z.infer<typeof QlooReasoningPanelPropsSche
 export const ExportRoadmapButtonPropsSchema = z.object({
   roadmapId: z.string().default("roadmap-1"),
   roadmapTitle: z.string().default("My CareerDNA Roadmap"),
+  trackKey: z.string().optional(),
+  projectTitle: z.string().optional(),
 });
 export type ExportRoadmapButtonProps = z.infer<typeof ExportRoadmapButtonPropsSchema>;
+
+// 11. CulturalAffinityExplorer Props Schema
+export const CulturalAffinityExplorerPropsSchema = z.object({
+  central: z
+    .object({
+      name: z.string().default("Elden Ring"),
+      category: z.string().default("Games"),
+    })
+    .default({ name: "Elden Ring", category: "Games" }),
+  adjacent: z
+    .array(
+      z.object({
+        name: z.string(),
+        category: z.string().optional(),
+        weight: z.number().optional(),
+      })
+    )
+    .default([]),
+  qlooActive: z.boolean().default(true),
+});
+export type CulturalAffinityExplorerProps = z.infer<typeof CulturalAffinityExplorerPropsSchema>;
+
+// 12. TasteGenomePanel Props Schema (Tambo generative UI surface)
+export const TasteGenomePanelPropsSchema = z.object({
+  motivations: z.array(z.string()).default([]),
+  cognitiveStyles: z.array(z.string()).default([]),
+  affinities: z
+    .array(
+      z.object({
+        domain: z.string(),
+        affinity: z.string(),
+        weight: z.number(),
+        reasoning: z.string().optional(),
+      })
+    )
+    .default([]),
+  seed: z.string().default("demo-student"),
+  caption: z.string().optional(),
+  source: z.enum(["qloo", "fallback"]).default("qloo"),
+});
+export type TasteGenomePanelProps = z.infer<typeof TasteGenomePanelPropsSchema>;

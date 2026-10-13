@@ -11,6 +11,8 @@ import { FollowUpQuestionCard } from "./FollowUpQuestionCard";
 import { ComparisonTable } from "./ComparisonTable";
 import { QlooReasoningPanel } from "./QlooReasoningPanel";
 import { ExportRoadmapButton } from "./ExportRoadmapButton";
+import { CulturalAffinityExplorer } from "./CulturalAffinityExplorer";
+import { TasteGenomePanel } from "./TasteGenomePanel";
 
 export interface ComponentSpec {
   component: string;
@@ -48,6 +50,8 @@ const REGISTERED_COMPONENTS: Record<string, React.ComponentType<any>> = {
   ComparisonTable,
   QlooReasoningPanel,
   ExportRoadmapButton,
+  CulturalAffinityExplorer,
+  TasteGenomePanel,
 };
 
 class ComponentErrorBoundary extends React.Component<

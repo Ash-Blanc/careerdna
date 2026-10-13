@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ExportRoadmapButtonProps, ExportRoadmapButtonPropsSchema } from "./registry";
-import { FileText, Printer, Check } from "lucide-react";
+import { FileText, Printer, Check, Download, FolderGit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
@@ -11,9 +11,12 @@ export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
 
   const [downloadingMd, setDownloadingMd] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const [downloadingStarter, setDownloadingStarter] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
 
   const roadmapId = props?.roadmapId || "roadmap-1";
+  const trackKey = props?.trackKey;
+  const projectTitle = props?.projectTitle;
 
   const handleDownloadMarkdown = async () => {
     try {
@@ -46,14 +49,48 @@ export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
     setDownloadingPdf(false);
   };
 
+  const handleDownloadStarterRepo = async () => {
+    if (!trackKey) return;
+    try {
+      setDownloadingStarter(true);
+      const res = await fetch("/api/portfolio/starter-repo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student: "CareerDNA Student",
+          trackKey,
+          projectTitle: projectTitle || undefined,
+        }),
+      });
+      if (!res.ok) throw new Error(`ZIP build failed (${res.status}).`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${trackKey}-starter.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setDownloaded(true);
+      setTimeout(() => setDownloaded(false), 3000);
+    } catch (e) {
+      console.error("Starter repo download error:", e);
+    } finally {
+      setDownloadingStarter(false);
+    }
+  };
+
   return (
     <div className="my-5 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4 flex flex-wrap items-center justify-between gap-3">
       <div>
         <h4 className="text-xs font-semibold text-white">Save & Take Your Roadmap</h4>
-        <p className="text-[11px] text-neutral-400">Export as clean Markdown for your Obsidian/Notion, or print as PDF</p>
+        <p className="text-[11px] text-neutral-400">
+          Markdown/PDF for applications, plus a real starter-repo ZIP for your portfolio.
+        </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Button
           type="button"
           variant="outline"
@@ -77,6 +114,24 @@ export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
           <Printer className="h-3.5 w-3.5" />
           <span>Print / PDF</span>
         </Button>
+
+        {trackKey && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadStarterRepo}
+            disabled={downloadingStarter}
+            className="flex items-center gap-1.5 text-xs border-emerald-500/30 text-emerald-300 hover:bg-emerald-950/30 hover:text-emerald-200"
+          >
+            {downloadingStarter ? (
+              <Download className="h-3.5 w-3.5 animate-pulse" />
+            ) : (
+              <FolderGit2 className="h-3.5 w-3.5" />
+            )}
+            <span>{downloadingStarter ? "Building ZIP..." : "Starter Repo ZIP"}</span>
+          </Button>
+        )}
       </div>
     </div>
   );

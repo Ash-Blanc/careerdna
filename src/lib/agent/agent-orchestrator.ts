@@ -141,7 +141,8 @@ export class AgentOrchestrator {
           },
         };
 
-        // 4. Export Roadmap Button
+        // 4. Export Roadmap Button (with trackKey so the student can also
+        //    pull a real starter-repo ZIP from the API).
         yield {
           type: "component",
           componentSpec: {
@@ -149,6 +150,8 @@ export class AgentOrchestrator {
             props: {
               roadmapId: roadmapRes.roadmapId,
               roadmapTitle: roadmapRes.title,
+              trackKey: directAction.payload.trackKey || projectRes.trackKey || undefined,
+              projectTitle: projectRes.title,
             },
           },
         };
@@ -216,6 +219,51 @@ export class AgentOrchestrator {
               workStylePreferences: tasteRes.workStylePreferences,
               culturalAffinities: tasteRes.culturalAffinities,
               isDegradedMode: tasteRes.isDegradedMode,
+            },
+          },
+        };
+
+        // TasteGenomePanel — the unique visual fingerprint that survives any
+        // single interaction. Qloo's taste graph is the differentiator.
+        yield {
+          type: "component",
+          componentSpec: {
+            component: "TasteGenomePanel",
+            props: {
+              motivations: tasteRes.coreMotivations,
+              cognitiveStyles: tasteRes.cognitiveStyles,
+              affinities: Object.values(tasteRes.culturalAffinities || {})
+                .flat()
+                .slice(0, 8) as any,
+              seed: profile.id || profile.userId || "demo-student",
+              caption: "Your Qloo-derived taste fingerprint",
+              source: tasteRes.isDegradedMode ? "fallback" : "qloo",
+            },
+          },
+        };
+
+        // CulturalAffinityExplorer — show how ONE taste radiates outward.
+        // This is the most Qloo-specific affordance in the system.
+        const affs = tasteRes.culturalAffinities || {};
+        const firstInterest = profile.interests[0]?.name || "Elden Ring";
+        const adjacentList = (affs[firstInterest] || Object.values(affs).flat().slice(0, 6)).map(
+          (a: any, i: number) => ({
+            name: a.affinity || `Adjacency ${i + 1}`,
+            category: a.domain || "Taste",
+            weight: typeof a.weight === "number" ? a.weight : 0.75 - i * 0.04,
+          })
+        );
+        yield {
+          type: "component",
+          componentSpec: {
+            component: "CulturalAffinityExplorer",
+            props: {
+              central: {
+                name: firstInterest,
+                category: profile.interests[0]?.category || "Games",
+              },
+              adjacent: adjacentList,
+              qlooActive: !tasteRes.isDegradedMode,
             },
           },
         };

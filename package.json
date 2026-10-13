@@ -4,9 +4,9 @@
   "description": "Taste-aware AI career coach for students powered by Qloo and Tambo Generative UI",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node init && next dev",
+    "build": "node init && next build",
+    "start": "node init && next start",
     "lint": "next lint",
     "test": "bun test",
     "db:generate": "bunx prisma generate",

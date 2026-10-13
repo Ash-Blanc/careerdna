@@ -19,7 +19,14 @@ export function TasteProfileCard(rawProps: TasteProfileCardProps) {
     );
   }
 
-  const { clusterSummary, coreMotivations, cognitiveStyles, workStylePreferences, culturalAffinities, isDegradedMode } = props;
+  const {
+    clusterSummary = "Analyzing cultural taste signals...",
+    coreMotivations = [],
+    cognitiveStyles = [],
+    workStylePreferences = [],
+    culturalAffinities = {},
+    isDegradedMode = false,
+  } = props;
 
   // Flatten cultural affinities if available
   const affinityEntries = Object.entries(culturalAffinities || {});
@@ -70,7 +77,7 @@ export function TasteProfileCard(rawProps: TasteProfileCardProps) {
             Inferred Motivations
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {coreMotivations.map((m, idx) => (
+            {(coreMotivations || []).map((m, idx) => (
               <span
                 key={idx}
                 className="rounded-lg bg-indigo-950/50 border border-indigo-500/20 px-2.5 py-1 text-xs font-medium text-indigo-200 capitalize"
@@ -88,7 +95,7 @@ export function TasteProfileCard(rawProps: TasteProfileCardProps) {
             Cognitive Style Signals
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {cognitiveStyles.map((c, idx) => (
+            {(cognitiveStyles || []).map((c, idx) => (
               <span
                 key={idx}
                 className="rounded-lg bg-purple-950/50 border border-purple-500/20 px-2.5 py-1 text-xs font-medium text-purple-200 capitalize"
@@ -125,8 +132,8 @@ export function TasteProfileCard(rawProps: TasteProfileCardProps) {
                         key={sIdx}
                         className="rounded bg-neutral-900 px-2 py-0.5 text-[11px] text-neutral-300 border border-neutral-800 flex items-center gap-1"
                       >
-                        <span className="text-cyan-400">{sig.domain}:</span>
-                        <span>{sig.affinity}</span>
+                        <span className="text-cyan-400">{sig.domain || "Interest"}:</span>
+                        <span>{sig.affinity || sig}</span>
                         {sig.weight && (
                           <span className="text-[10px] text-indigo-400 font-mono">
                             {Math.round(sig.weight * 100)}%
@@ -143,14 +150,14 @@ export function TasteProfileCard(rawProps: TasteProfileCardProps) {
       )}
 
       {/* Work Style Preferences */}
-      {workStylePreferences.length > 0 && (
+      {workStylePreferences && workStylePreferences.length > 0 && (
         <div className="mt-4 rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4">
           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">
             <Compass className="h-4 w-4" />
             Optimal Work Environment & Agency
           </div>
           <ul className="space-y-1 text-xs text-neutral-300">
-            {workStylePreferences.map((w, idx) => (
+            {(workStylePreferences || []).map((w, idx) => (
               <li key={idx} className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 {w}

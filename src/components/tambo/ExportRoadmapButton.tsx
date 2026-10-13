@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { ExportRoadmapButtonProps, ExportRoadmapButtonPropsSchema } from "./registry";
-import { Download, FileText, Printer, Check } from "lucide-react";
+import { FileText, Printer, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
   const result = ExportRoadmapButtonPropsSchema.safeParse(rawProps);
@@ -12,19 +13,19 @@ export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
 
-  if (!props?.roadmapId) return null;
+  const roadmapId = props?.roadmapId || "roadmap-1";
 
   const handleDownloadMarkdown = async () => {
     try {
       setDownloadingMd(true);
-      const res = await fetch(`/api/roadmaps/${props.roadmapId}/export?format=markdown`);
+      const res = await fetch(`/api/roadmaps/${roadmapId}/export?format=markdown`);
       if (res.ok) {
         const data = await res.json();
         const blob = new Blob([data.content || ""], { type: "text/markdown" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = data.filename || `careerdna-roadmap-${props.roadmapId}.md`;
+        a.download = data.filename || `careerdna-roadmap-${roadmapId}.md`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -41,7 +42,7 @@ export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
 
   const handleDownloadPdf = () => {
     setDownloadingPdf(true);
-    window.open(`/api/roadmaps/${props.roadmapId}/export?format=pdf`, "_blank");
+    window.open(`/api/roadmaps/${roadmapId}/export?format=pdf`, "_blank");
     setDownloadingPdf(false);
   };
 
@@ -53,25 +54,29 @@ export function ExportRoadmapButton(rawProps: ExportRoadmapButtonProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={handleDownloadMarkdown}
           disabled={downloadingMd}
-          className="flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-medium text-neutral-200 hover:bg-neutral-700 hover:text-white transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 text-xs"
         >
           {downloaded ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <FileText className="h-3.5 w-3.5" />}
           <span>{downloadingMd ? "Exporting..." : "Markdown"}</span>
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="gradient"
+          size="sm"
           onClick={handleDownloadPdf}
           disabled={downloadingPdf}
-          className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-500 transition-all shadow-md shadow-indigo-600/20"
+          className="flex items-center gap-1.5 text-xs shadow-md shadow-indigo-600/20"
         >
           <Printer className="h-3.5 w-3.5" />
           <span>Print / PDF</span>
-        </button>
+        </Button>
       </div>
     </div>
   );

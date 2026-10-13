@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { INTEREST_CATEGORIES, InterestItem } from "@/lib/taxonomy/interest-categories";
+import { INTEREST_CATEGORIES } from "@/lib/taxonomy/interest-categories";
 import {
   Sparkles,
   ArrowRight,
@@ -12,10 +12,20 @@ import {
   Compass,
   FileText,
   User,
-  Clock,
-  DollarSign,
   AlertCircle,
+  X,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -158,61 +168,60 @@ export default function OnboardingPage() {
       </div>
 
       {errorMsg && (
-        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-950/20 p-4 text-xs text-red-300 flex items-center gap-2">
-          <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+        <div className="mb-6 rounded-xl border border-rose-500/30 bg-rose-950/20 p-4 text-xs text-rose-300 flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* STEP 1: Basic Info */}
       {currentStep === 1 && (
-        <div className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
-          <div className="flex items-center gap-2 border-b border-neutral-800 pb-3">
+        <div className="rounded-3xl border border-white/[0.08] bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
+          <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
             <User className="h-4 w-4 text-indigo-400" />
             <h2 className="text-sm font-semibold text-white">Academic Background & Weekly Constraints</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">Education Level</label>
-              <select
-                value={educationLevel}
-                onChange={(e) => setEducationLevel(e.target.value)}
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-              >
-                <option>Undergraduate (1st/2nd Year)</option>
-                <option>Undergraduate (3rd/4th Year)</option>
-                <option>Graduate / Master's Student</option>
-                <option>High School Senior</option>
-                <option>Bootcamp Graduate</option>
-                <option>Self-Taught / Career Switcher</option>
-              </select>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Education Level</label>
+              <Select value={educationLevel} onValueChange={setEducationLevel}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select education level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Undergraduate (1st/2nd Year)">Undergraduate (1st/2nd Year)</SelectItem>
+                  <SelectItem value="Undergraduate (3rd/4th Year)">Undergraduate (3rd/4th Year)</SelectItem>
+                  <SelectItem value="Graduate / Master's Student">Graduate / Master's Student</SelectItem>
+                  <SelectItem value="High School Senior">High School Senior</SelectItem>
+                  <SelectItem value="Bootcamp Graduate">Bootcamp Graduate</SelectItem>
+                  <SelectItem value="Self-Taught / Career Switcher">Self-Taught / Career Switcher</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">Major or Primary Field</label>
-              <input
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Major or Primary Field</label>
+              <Input
                 type="text"
                 value={major}
                 onChange={(e) => setMajor(e.target.value)}
                 placeholder="e.g. Computer Science, Mechanical, Design, Economics"
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">Current Location (City, Country)</label>
-              <input
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Current Location (City, Country)</label>
+              <Input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g. Bengaluru, India or Remote / Global"
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">
                 Weekly Available Hours ({weeklyHours} hrs/week)
               </label>
               <input
@@ -224,7 +233,7 @@ export default function OnboardingPage() {
                 onChange={(e) => setWeeklyHours(Number(e.target.value))}
                 className="w-full accent-indigo-500 mt-2"
               />
-              <div className="flex justify-between text-[10px] text-neutral-500 mt-1">
+              <div className="flex justify-between text-[10px] text-neutral-500 mt-1 font-mono">
                 <span>5 hrs (Casual)</span>
                 <span>15 hrs (Recommended)</span>
                 <span>40 hrs (Full-time)</span>
@@ -232,59 +241,57 @@ export default function OnboardingPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">Budget Constraints</label>
-              <select
-                value={budgetConstraint}
-                onChange={(e) => setBudgetConstraint(e.target.value)}
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
-              >
-                <option>Zero / Free only</option>
-                <option>Low (&lt;$30/month for APIs or tools)</option>
-                <option>Moderate (Can purchase key textbooks or courses)</option>
-                <option>Flexible</option>
-              </select>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Budget Constraints</label>
+              <Select value={budgetConstraint} onValueChange={setBudgetConstraint}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select budget constraint" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Zero / Free only">Zero / Free only</SelectItem>
+                  <SelectItem value="Low (<$30/month for APIs or tools)">Low (&lt;$30/month for APIs or tools)</SelectItem>
+                  <SelectItem value="Moderate (Can purchase key textbooks or courses)">Moderate (Can purchase key textbooks or courses)</SelectItem>
+                  <SelectItem value="Flexible">Flexible</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">Current Technical Skills (Comma-separated)</label>
-              <input
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Current Technical Skills (Comma-separated)</label>
+              <Input
                 type="text"
                 value={skillsInput}
                 onChange={(e) => setSkillsInput(e.target.value)}
                 placeholder="Python, React, Git, SQL..."
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-300 mb-1">What are your biggest career anxieties or goals?</label>
-            <textarea
+            <label className="block text-xs font-medium text-neutral-300 mb-1.5">What are your biggest career anxieties or goals?</label>
+            <Textarea
               rows={3}
               value={careerConcerns}
               onChange={(e) => setCareerConcerns(e.target.value)}
-              placeholder="e.g. I hate building boring CRUD apps, want high ownership, worried about AI replacing entry coders..."
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-xs text-white focus:border-indigo-500 focus:outline-none"
+              placeholder="e.g. I want high ownership, dislike generic CRUD apps, want differentiated specialized tracks..."
             />
           </div>
 
           <div className="flex justify-end pt-2">
-            <button
+            <Button
               type="button"
               onClick={() => setCurrentStep(2)}
-              className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-indigo-500 transition-all"
             >
               <span>Next: Links & Context</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </button>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}
 
       {/* STEP 2: Optional Context & Portfolio */}
       {currentStep === 2 && (
-        <div className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
-          <div className="flex items-center gap-2 border-b border-neutral-800 pb-3">
+        <div className="rounded-3xl border border-white/[0.08] bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
+          <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3">
             <FileText className="h-4 w-4 text-purple-400" />
             <h2 className="text-sm font-semibold text-white">Digital Footprint & Experience (Optional)</h2>
           </div>
@@ -296,100 +303,99 @@ export default function OnboardingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">GitHub Profile Link</label>
-              <input
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">GitHub Profile Link</label>
+              <Input
                 type="url"
                 value={githubUrl}
                 onChange={(e) => setGithubUrl(e.target.value)}
                 placeholder="https://github.com/username"
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">Personal Portfolio or Blog URL</label>
-              <input
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Personal Portfolio or Blog URL</label>
+              <Input
                 type="url"
                 value={portfolioUrl}
                 onChange={(e) => setPortfolioUrl(e.target.value)}
                 placeholder="https://yourname.dev"
-                className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2.5 text-xs text-white focus:border-indigo-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-300 mb-1">Resume Summary or Key Projects</label>
-            <textarea
+            <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+              Resume Text or Coursework Highlights (Paste plain text)
+            </label>
+            <Textarea
               rows={4}
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}
               placeholder="Paste bullet points of recent projects, hackathons, or coursework..."
-              className="w-full rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-xs text-white focus:border-indigo-500 focus:outline-none"
             />
           </div>
 
           <div className="flex items-center justify-between pt-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => setCurrentStep(1)}
-              className="flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-xs font-semibold text-neutral-300 hover:text-white"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ArrowLeft className="h-4 w-4" />
               <span>Back</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
               onClick={() => setCurrentStep(3)}
-              className="flex items-center gap-1.5 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-indigo-500 transition-all"
             >
               <span>Next: Cultural Passions</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </button>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}
 
       {/* STEP 3: Cultural Taste Intake */}
       {currentStep === 3 && (
-        <div className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
-          <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+        <div className="rounded-3xl border border-white/[0.08] bg-neutral-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-md space-y-6">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
             <div className="flex items-center gap-2">
               <Compass className="h-4 w-4 text-pink-400" />
               <h2 className="text-sm font-semibold text-white">Select Your Cultural Passions & Obsessions</h2>
             </div>
-            <div className="text-xs text-indigo-400 font-semibold">{selectedInterests.length} Selected</div>
+            <div className="text-xs text-indigo-400 font-semibold font-mono">{selectedInterests.length} Selected</div>
           </div>
 
           {/* Selected chips bar */}
           {selectedInterests.length > 0 && (
-            <div className="rounded-2xl bg-neutral-950/70 p-3.5 border border-neutral-800">
+            <div className="rounded-2xl bg-neutral-950/70 p-3.5 border border-white/[0.08]">
               <span className="text-[10px] uppercase font-bold text-neutral-400 tracking-wider block mb-2">
                 Your Cultural DNA Stack:
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {selectedInterests.map((item, idx) => (
-                  <span
+                  <Badge
                     key={idx}
+                    variant="secondary"
                     className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-950/60 border border-indigo-500/30 px-2.5 py-1 text-xs font-medium text-indigo-200"
                   >
                     <span>{item.name}</span>
                     <button
                       type="button"
                       onClick={() => removeInterest(item.name)}
-                      className="text-neutral-400 hover:text-white"
+                      className="text-neutral-400 hover:text-white ml-0.5"
                     >
-                      ×
+                      <X className="h-3 w-3" />
                     </button>
-                  </span>
+                  </Badge>
                 ))}
               </div>
             </div>
           )}
 
           {/* Category Tabs */}
-          <div className="flex gap-1.5 overflow-x-auto pb-2 border-b border-neutral-800/60">
+          <div className="flex gap-1.5 overflow-x-auto pb-2 border-b border-white/[0.08]">
             {INTEREST_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
@@ -421,12 +427,12 @@ export default function OnboardingPage() {
                     className={`flex items-center justify-between rounded-xl border p-3 text-left text-xs font-medium transition-all ${
                       isSelected
                         ? "border-indigo-500 bg-indigo-950/40 text-white shadow-md shadow-indigo-500/10 ring-1 ring-indigo-500"
-                        : "border-neutral-800 bg-neutral-900/50 text-neutral-300 hover:border-neutral-700 hover:bg-neutral-900 hover:text-white"
+                        : "border-white/[0.06] bg-neutral-900/50 text-neutral-300 hover:border-white/[0.15] hover:bg-neutral-850 hover:text-white"
                     }`}
                   >
                     <div>
                       <div className="font-semibold">{chip.name}</div>
-                      <div className="text-[10px] text-neutral-500 mt-0.5">{chip.culturalSignals.slice(0, 2).join(" · ")}</div>
+                      <div className="text-[10px] text-neutral-500 mt-0.5 font-mono">{chip.culturalSignals.slice(0, 2).join(" · ")}</div>
                     </div>
                     {isSelected && <Check className="h-4 w-4 text-indigo-400 shrink-0" />}
                   </button>
@@ -436,44 +442,45 @@ export default function OnboardingPage() {
 
             {/* Custom Interest input */}
             <form onSubmit={addCustomInterest} className="mt-4 flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={customInterestName}
                 onChange={(e) => setCustomInterestName(e.target.value)}
                 placeholder={`Add custom interest in ${activeCategory.label.toLowerCase()}...`}
-                className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2 text-xs text-white placeholder-neutral-500 focus:border-indigo-500 focus:outline-none"
+                className="flex-1"
               />
-              <button
+              <Button
                 type="submit"
+                variant="secondary"
                 disabled={!customInterestName.trim()}
-                className="flex items-center gap-1 rounded-xl bg-neutral-800 px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:bg-neutral-700 disabled:opacity-40"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-4 w-4" />
                 <span>Add</span>
-              </button>
+              </Button>
             </form>
           </div>
 
           {/* Navigation Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-neutral-800">
-            <button
+          <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
+            <Button
               type="button"
+              variant="outline"
               onClick={() => setCurrentStep(2)}
-              className="flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-xs font-semibold text-neutral-300 hover:text-white"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ArrowLeft className="h-4 w-4" />
               <span>Back</span>
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="gradient"
               disabled={submitting}
               onClick={handleSubmit}
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 hover:scale-102 transition-all disabled:opacity-50"
+              className="px-6 py-2.5"
             >
               <span>{submitting ? "Analyzing Cultural DNA..." : "Launch CareerDNA Coach"}</span>
-              <Sparkles className="h-3.5 w-3.5" />
-            </button>
+              <Sparkles className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       )}

@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { ResourceListProps, ResourceListPropsSchema } from "./registry";
-import { BookOpen, Users, Video, Calendar, ExternalLink, Filter } from "lucide-react";
+import { BookOpen, Users, Video, Calendar, ExternalLink } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export function ResourceList(rawProps: ResourceListProps) {
   const result = ResourceListPropsSchema.safeParse(rawProps);
@@ -29,29 +31,27 @@ export function ResourceList(rawProps: ResourceListProps) {
   };
 
   return (
-    <div className="my-6 rounded-2xl border border-neutral-800 bg-neutral-950/80 p-6 shadow-xl backdrop-blur-md">
+    <div className="my-6 rounded-2xl border border-white/[0.08] bg-neutral-950/80 p-6 shadow-xl backdrop-blur-md">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-4 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-4 mb-4">
         <div>
           <span className="text-[11px] font-semibold text-indigo-400 uppercase tracking-wider">Curated Launchpad</span>
           <h3 className="text-base font-bold text-white mt-0.5">{props.title || "Free & High-Leverage Learning Resources"}</h3>
         </div>
 
-        {/* Filter Chips */}
+        {/* Filter Chips using shadcn Button */}
         <div className="flex items-center gap-1.5 overflow-x-auto">
           {["ALL", "LEARNING", "COMMUNITY", "CREATOR"].map((cat) => (
-            <button
+            <Button
               key={cat}
               type="button"
+              size="sm"
+              variant={activeFilter === cat ? "default" : "outline"}
               onClick={() => setActiveFilter(cat)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
-                activeFilter === cat
-                  ? "bg-indigo-600 text-white"
-                  : "bg-neutral-900 text-neutral-400 hover:text-neutral-200 border border-neutral-800"
-              }`}
+              className="text-[11px] h-7 px-2.5 rounded-lg"
             >
               {cat === "ALL" ? "All" : cat.charAt(0) + cat.slice(1).toLowerCase()}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -64,20 +64,20 @@ export function ResourceList(rawProps: ResourceListProps) {
             href={res.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col justify-between rounded-xl border border-neutral-850 bg-neutral-900/60 p-4 transition-all hover:border-neutral-700 hover:bg-neutral-900"
+            className="group flex flex-col justify-between rounded-xl border border-white/[0.06] bg-neutral-900/60 p-4 transition-all hover:border-white/[0.15] hover:bg-neutral-900"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
                   {getCategoryIcon(res.category)}
-                  <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
+                  <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider font-mono">
                     {res.category}
                   </span>
                 </div>
                 {res.isFree && (
-                  <span className="rounded bg-emerald-950/40 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                  <Badge variant="success" className="font-mono text-[10px]">
                     100% Free
-                  </span>
+                  </Badge>
                 )}
               </div>
 
@@ -90,11 +90,11 @@ export function ResourceList(rawProps: ResourceListProps) {
 
             {/* Tags */}
             {res.tags && res.tags.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-1 border-t border-neutral-800/40 pt-2.5">
+              <div className="mt-3 flex flex-wrap gap-1 border-t border-white/[0.06] pt-2.5">
                 {res.tags.slice(0, 3).map((tag, tIdx) => (
-                  <span key={tIdx} className="rounded bg-neutral-800/80 px-2 py-0.5 text-[10px] text-neutral-400">
+                  <Badge key={tIdx} variant="secondary" className="font-mono text-[10px] px-1.5 py-0 text-neutral-400">
                     #{tag}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             )}

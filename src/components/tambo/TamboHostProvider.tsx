@@ -50,6 +50,40 @@ const REGISTERED_COMPONENTS: Record<string, React.ComponentType<any>> = {
   ExportRoadmapButton,
 };
 
+class ComponentErrorBoundary extends React.Component<
+  { componentName: string; children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { componentName: string; children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error(`[Tambo Generative UI Error in <${this.props.componentName} />]:`, error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 text-xs text-amber-200">
+          <div className="font-semibold text-amber-300 mb-1">
+            Generative UI Notice: &lt;{this.props.componentName} /&gt;
+          </div>
+          <p className="text-neutral-400">
+            This generative UI module received partial parameters and recovered safely. Ask the strategist to regenerate or deep dive into this track.
+          </p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export function TamboHostProvider({
   children,
   initialMessages = [],
@@ -179,7 +213,11 @@ export function TamboHostProvider({
         props = {};
       }
     }
-    return <Component {...props} />;
+    return (
+      <ComponentErrorBoundary componentName={parsed.component}>
+        <Component {...props} />
+      </ComponentErrorBoundary>
+    );
   }, []);
 
   return (
@@ -201,7 +239,14 @@ export function TamboHostProvider({
 export function useTamboHost() {
   const context = useContext(TamboHostContext);
   if (!context) {
-    throw new Error("useTamboHost must be used within a TamboHostProvider");
+    return {
+      messages: [],
+      isStreaming: false,
+      sendMessage: async () => {},
+      triggerAction: async () => {},
+      resetThread: () => {},
+      renderComponent: () => null,
+    };
   }
   return context;
 }

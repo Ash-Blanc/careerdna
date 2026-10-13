@@ -3,6 +3,8 @@
 import React from "react";
 import { QlooReasoningPanelProps, QlooReasoningPanelPropsSchema } from "./registry";
 import { Network, Sparkles, CheckCircle2, ShieldAlert, GitFork } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { Badge } from "@/components/ui/badge";
 
 export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
   const result = QlooReasoningPanelPropsSchema.safeParse(rawProps);
@@ -10,10 +12,23 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
 
   if (!props) return null;
 
-  const { qlooActive, seedInterests, inferredTasteSignals, culturalCorrelationExplanation, adjacentInterests } = props;
+  const {
+    qlooActive = true,
+    seedInterests = [],
+    inferredTasteSignals = [],
+    culturalCorrelationExplanation = "Cultural affinity mapping derived from your core taste signals.",
+    adjacentInterests = [],
+  } = props;
+
+  const seedList = Array.isArray(seedInterests) ? seedInterests : [];
+  const signalsList = Array.isArray(inferredTasteSignals) ? inferredTasteSignals : [];
+  const adjacentList = Array.isArray(adjacentInterests) ? adjacentInterests : [];
 
   return (
-    <div className="my-5 rounded-2xl border border-indigo-500/20 bg-gradient-to-b from-indigo-950/20 via-neutral-900/90 to-neutral-950 p-5 shadow-xl backdrop-blur-md">
+    <SpotlightCard
+      spotlightColor="rgba(99, 102, 241, 0.16)"
+      className="my-5 border-indigo-500/20 bg-gradient-to-b from-indigo-950/20 via-neutral-900/90 to-neutral-950 p-5 shadow-xl backdrop-blur-md"
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-3.5 mb-3.5">
         <div className="flex items-center gap-2">
@@ -27,13 +42,13 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
         </div>
 
         {qlooActive ? (
-          <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400 border border-emerald-500/20">
+          <Badge variant="success" className="text-[11px] flex items-center gap-1.5 font-medium">
             <CheckCircle2 className="h-3 w-3" /> Live Affinity Graph
-          </span>
+          </Badge>
         ) : (
-          <span className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[11px] font-medium text-amber-400 border border-amber-500/20">
-            <ShieldAlert className="h-3 w-3" /> Local Ontological Model
-          </span>
+          <Badge variant="secondary" className="text-[11px] flex items-center gap-1.5 font-medium">
+            <ShieldAlert className="h-3 w-3 text-amber-400" /> Local Ontological Model
+          </Badge>
         )}
       </div>
 
@@ -54,7 +69,7 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
             Seed Passions
           </span>
           <div className="flex flex-wrap gap-1">
-            {seedInterests.map((seed, idx) => (
+            {seedList.map((seed, idx) => (
               <span key={idx} className="rounded bg-neutral-800 px-2 py-0.5 text-[11px] text-neutral-300">
                 {seed}
               </span>
@@ -67,7 +82,7 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
             Inferred Latent Signals
           </span>
           <div className="flex flex-wrap gap-1">
-            {inferredTasteSignals.map((sig, idx) => (
+            {signalsList.map((sig, idx) => (
               <span key={idx} className="rounded bg-indigo-950/50 border border-indigo-500/20 px-2 py-0.5 text-[11px] text-indigo-200">
                 {sig}
               </span>
@@ -77,14 +92,14 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
       </div>
 
       {/* Adjacent Cultural Connections */}
-      {adjacentInterests.length > 0 && (
+      {adjacentList.length > 0 && (
         <div className="rounded-lg bg-neutral-950/40 p-2.5 border border-neutral-800/40 text-xs">
           <div className="flex items-center gap-1.5 text-neutral-400 font-medium text-[11px] mb-1.5">
             <GitFork className="h-3 w-3 text-purple-400" />
             <span>Culturally Adjacent Domains Discovered:</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {adjacentInterests.map((adj, idx) => (
+            {adjacentList.map((adj, idx) => (
               <span key={idx} className="text-neutral-300 bg-neutral-900 px-2 py-0.5 rounded text-[11px]">
                 {adj}
               </span>
@@ -92,6 +107,6 @@ export function QlooReasoningPanel(rawProps: QlooReasoningPanelProps) {
           </div>
         </div>
       )}
-    </div>
+    </SpotlightCard>
   );
 }

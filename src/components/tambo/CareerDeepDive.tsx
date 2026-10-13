@@ -3,6 +3,8 @@
 import React from "react";
 import { CareerDeepDiveProps, CareerDeepDivePropsSchema } from "./registry";
 import { Briefcase, DollarSign, AlertCircle, Wrench, Lightbulb, Clock } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { Badge } from "@/components/ui/badge";
 
 export function CareerDeepDive(rawProps: CareerDeepDiveProps) {
   const result = CareerDeepDivePropsSchema.safeParse(rawProps);
@@ -10,10 +12,27 @@ export function CareerDeepDive(rawProps: CareerDeepDiveProps) {
 
   if (!props) return null;
 
-  const { trackTitle, fitScore, dayInLife, requiredSkills, entryRoles, salaryContext, risksAndRealities, portfolioIdeas } = props;
+  const {
+    trackTitle = "Career Track",
+    fitScore = 90,
+    dayInLife = "Sprint planning, deep architectural builds, and iterative feature shipping.",
+    requiredSkills = [],
+    entryRoles = [],
+    salaryContext = {
+      entry: "Competitive Entry Range",
+      mid: "High Mid-Career Range",
+      indiaNotes: "High demand in top technology hubs",
+      globalNotes: "Strong global remote options",
+    },
+    risksAndRealities = "Portfolio proof-of-work is decisive over pedigree.",
+    portfolioIdeas = [],
+  } = props;
 
   return (
-    <div className="my-6 rounded-2xl border border-neutral-800 bg-gradient-to-b from-neutral-900 via-neutral-900 to-neutral-950 p-6 shadow-xl backdrop-blur-md">
+    <SpotlightCard
+      spotlightColor="rgba(99, 102, 241, 0.15)"
+      className="my-6 border-neutral-800 bg-neutral-950/90 p-6 shadow-xl backdrop-blur-md"
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-4 mb-5">
         <div>
@@ -43,10 +62,10 @@ export function CareerDeepDive(rawProps: CareerDeepDiveProps) {
             Typical First Entry Roles
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {entryRoles.map((role, idx) => (
-              <span key={idx} className="rounded-md bg-emerald-950/30 border border-emerald-500/20 px-2 py-0.5 text-xs text-emerald-200">
+            {(entryRoles || []).map((role, idx) => (
+              <Badge key={idx} variant="success" className="text-xs">
                 {role}
-              </span>
+              </Badge>
             ))}
           </div>
         </div>
@@ -58,10 +77,10 @@ export function CareerDeepDive(rawProps: CareerDeepDiveProps) {
             Core Skills to Prove
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {requiredSkills.slice(0, 6).map((skill, idx) => (
-              <span key={idx} className="rounded-md bg-cyan-950/30 border border-cyan-500/20 px-2 py-0.5 text-xs text-cyan-200">
+            {(requiredSkills || []).slice(0, 6).map((skill, idx) => (
+              <Badge key={idx} variant="secondary" className="text-xs">
                 {skill}
-              </span>
+              </Badge>
             ))}
           </div>
         </div>
@@ -76,16 +95,16 @@ export function CareerDeepDive(rawProps: CareerDeepDiveProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="rounded-lg bg-neutral-950/50 p-2.5 border border-neutral-800">
             <div className="text-neutral-400 font-medium">Entry-Level Range</div>
-            <div className="text-white font-semibold mt-0.5">{salaryContext.entry}</div>
+            <div className="text-white font-semibold mt-0.5">{salaryContext?.entry || "Competitive Entry Range"}</div>
           </div>
           <div className="rounded-lg bg-neutral-950/50 p-2.5 border border-neutral-800">
             <div className="text-neutral-400 font-medium">Mid-Career Range</div>
-            <div className="text-white font-semibold mt-0.5">{salaryContext.mid}</div>
+            <div className="text-white font-semibold mt-0.5">{salaryContext?.mid || "High Mid-Career Range"}</div>
           </div>
         </div>
         <div className="mt-3 space-y-1.5 text-xs text-neutral-400">
-          <p><strong className="text-neutral-200">India Market:</strong> {salaryContext.indiaNotes}</p>
-          <p><strong className="text-neutral-200">Global Remote:</strong> {salaryContext.globalNotes}</p>
+          <p><strong className="text-neutral-200">India Market:</strong> {salaryContext?.indiaNotes || "Rapidly growing demand in major tech hubs"}</p>
+          <p><strong className="text-neutral-200">Global Remote:</strong> {salaryContext?.globalNotes || "High global remote hiring viability"}</p>
         </div>
       </div>
 
@@ -99,19 +118,19 @@ export function CareerDeepDive(rawProps: CareerDeepDiveProps) {
       </div>
 
       {/* Portfolio Ideas */}
-      {portfolioIdeas.length > 0 && (
+      {portfolioIdeas && portfolioIdeas.length > 0 && (
         <div className="rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4">
           <div className="flex items-center gap-2 text-xs font-semibold text-indigo-300 uppercase tracking-wider mb-2">
             <Lightbulb className="h-4 w-4" />
             Signature Project Ideas to Stand Out
           </div>
           <ul className="space-y-1 text-xs text-neutral-300 list-disc list-inside">
-            {portfolioIdeas.map((idea, idx) => (
+            {(portfolioIdeas || []).map((idea, idx) => (
               <li key={idx}>{idea}</li>
             ))}
           </ul>
         </div>
       )}
-    </div>
+    </SpotlightCard>
   );
 }

@@ -2,8 +2,9 @@
 
 import React from "react";
 import { PortfolioProjectCardProps, PortfolioProjectCardPropsSchema } from "./registry";
-import { FolderGit2, Sparkles, CheckCircle2, Clock, Code, Award } from "lucide-react";
+import { FolderGit2, Sparkles, Clock, Code, Award } from "lucide-react";
 import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { Badge } from "@/components/ui/badge";
 
 export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
   const result = PortfolioProjectCardPropsSchema.safeParse(rawProps);
@@ -11,7 +12,20 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
 
   if (!props) return null;
 
-  const { title, goal, features, techStack, timelineWeeks, difficulty, whyFitReason, starterMilestones } = props;
+  const {
+    title = "Signature Portfolio Project",
+    goal = "Build a production-grade application demonstrating complete architectural understanding.",
+    features = [],
+    techStack = [],
+    timelineWeeks = 4,
+    difficulty = "Intermediate",
+    whyFitReason = "Aligns with your core motivations and taste patterns.",
+    starterMilestones = [],
+  } = props;
+
+  const featureList = Array.isArray(features) ? features : [];
+  const stackList = Array.isArray(techStack) ? techStack : [];
+  const milestoneList = Array.isArray(starterMilestones) ? starterMilestones : [];
 
   return (
     <SpotlightCard
@@ -35,9 +49,9 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
             <Clock className="h-3 w-3 text-neutral-400" />
             {timelineWeeks} Weeks Scope
           </span>
-          <span className="rounded-full bg-indigo-500/10 px-2.5 py-1 text-xs text-indigo-300 font-semibold border border-indigo-500/20">
+          <Badge variant="purple" className="text-xs font-semibold">
             {difficulty}
-          </span>
+          </Badge>
         </div>
       </div>
 
@@ -63,7 +77,7 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
           Recommended Tech Stack
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {techStack.map((tech, idx) => (
+          {stackList.map((tech, idx) => (
             <span key={idx} className="rounded-md bg-neutral-800 px-2.5 py-1 text-xs font-mono text-neutral-200 border border-neutral-700">
               {tech}
             </span>
@@ -72,14 +86,14 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
       </div>
 
       {/* Core Features */}
-      {features.length > 0 && (
+      {featureList.length > 0 && (
         <div className="mb-4">
           <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
             <Award className="h-3.5 w-3.5 text-emerald-400" />
             Standout Portfolio Features
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {features.map((feat, idx) => (
+            {featureList.map((feat, idx) => (
               <div key={idx} className="rounded-lg bg-neutral-950/40 p-2.5 text-xs text-neutral-300 border border-neutral-900 flex items-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
                 <span>{feat}</span>
@@ -90,19 +104,19 @@ export function PortfolioProjectCard(rawProps: PortfolioProjectCardProps) {
       )}
 
       {/* Starter Milestones */}
-      {starterMilestones && starterMilestones.length > 0 && (
+      {milestoneList.length > 0 && (
         <div className="rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-4">
           <div className="text-[11px] font-semibold text-neutral-300 uppercase tracking-wider mb-2.5">
             Sprint Execution Plan:
           </div>
           <div className="space-y-2">
-            {starterMilestones.map((m, idx) => (
+            {milestoneList.map((m, idx) => (
               <div key={idx} className="flex items-center justify-between text-xs text-neutral-300 bg-neutral-950/40 p-2 rounded-lg border border-neutral-800/40">
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                  {m.milestone}
+                  <span className="font-mono text-indigo-400 font-bold">W{m.dueWeek}:</span>
+                  <span>{m.milestone}</span>
                 </span>
-                <span className="text-[11px] font-mono text-neutral-500">Week {m.dueWeek}</span>
+                <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-semibold">Checkpoint</span>
               </div>
             ))}
           </div>

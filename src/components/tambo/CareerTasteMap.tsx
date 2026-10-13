@@ -2,20 +2,22 @@
 
 import React, { useState, useEffect } from "react";
 import { CareerTasteMapProps, CareerTasteMapPropsSchema } from "./registry";
-import { Compass, CheckCircle, ArrowRight, AlertTriangle, Layers, Flame, Filter } from "lucide-react";
+import { Compass, CheckCircle, ArrowRight, AlertTriangle, Layers, Flame } from "lucide-react";
 import { useTamboHost } from "./TamboHostProvider";
 import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
 import { BorderBeam } from "@/components/ui/21st/BorderBeam";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export function CareerTasteMap(rawProps: CareerTasteMapProps) {
   const result = CareerTasteMapPropsSchema.safeParse(rawProps);
   const props = result.success ? result.data : rawProps;
   const { triggerAction } = useTamboHost();
 
-  const [selectedId, setSelectedId] = useState<string | null>(props.selectedCareerId || null);
+  const [selectedId, setSelectedId] = useState<string | null>(props?.selectedCareerId || null);
   const [activeTier, setActiveTier] = useState<string>("ALL");
 
-  const careerOptions = props?.careerOptions || [];
+  const careerOptions = Array.isArray(props?.careerOptions) ? props.careerOptions : [];
 
   useEffect(() => {
     if (props?.selectedCareerId) {
@@ -56,7 +58,7 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
   };
 
   const filteredOptions =
-    activeTier === "ALL" ? careerOptions : careerOptions.filter((c) => c.demandTier === activeTier);
+    activeTier === "ALL" ? careerOptions : careerOptions.filter((c) => (c.demandTier || "High Demand") === activeTier);
 
   return (
     <div className="my-6 space-y-4">
@@ -95,13 +97,14 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredOptions.map((career) => {
           const isSelected = selectedId === career.id;
+          const demandTier = career.demandTier || "High Demand";
 
-          const tierBadgeColor =
-            career.demandTier === "Founder"
-              ? "bg-amber-500/10 text-amber-300 border-amber-500/30"
-              : career.demandTier === "Differentiated"
-              ? "bg-purple-500/10 text-purple-300 border-purple-500/30"
-              : "bg-cyan-500/10 text-cyan-300 border-cyan-500/30";
+          const tierBadgeVariant =
+            demandTier === "Founder"
+              ? "destructive"
+              : demandTier === "Differentiated"
+              ? "purple"
+              : "secondary";
 
           return (
             <SpotlightCard
@@ -119,9 +122,9 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
               <div>
                 <div className="flex items-start justify-between gap-3 mb-2.5">
                   <div>
-                    <span className={`inline-block rounded-md border px-2 py-0.5 text-[11px] font-medium mb-1.5 ${tierBadgeColor}`}>
-                      {career.demandTier}
-                    </span>
+                    <Badge variant={tierBadgeVariant as any} className="text-[10px] uppercase font-bold tracking-wider mb-1.5">
+                      {demandTier}
+                    </Badge>
                     <h4 className="text-base font-semibold text-white leading-snug">{career.title}</h4>
                   </div>
 
@@ -145,7 +148,7 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
                     Core Skills
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {career.requiredSkills.slice(0, 4).map((skill, idx) => (
+                    {(career.requiredSkills || []).slice(0, 4).map((skill, idx) => (
                       <span
                         key={idx}
                         className="rounded-md bg-neutral-800/80 px-2 py-0.5 text-[11px] text-neutral-200 border border-neutral-700/50"
@@ -165,33 +168,33 @@ export function CareerTasteMap(rawProps: CareerTasteMapProps) {
 
               {/* Action Buttons */}
               <div className="flex items-center gap-2 pt-2 border-t border-neutral-800/60">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => handleDeepDive(career)}
-                  className="flex-1 rounded-xl border border-neutral-700/80 bg-neutral-800/50 px-3 py-2 text-xs font-medium text-neutral-300 hover:bg-neutral-800 hover:text-white transition-all text-center"
+                  className="flex-1 text-xs"
                 >
                   Deep Dive
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
+                  variant={isSelected ? "default" : "gradient"}
+                  size="sm"
                   onClick={() => handleSelect(career)}
-                  className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all shadow-md ${
-                    isSelected
-                      ? "bg-indigo-600 text-white shadow-indigo-500/25 ring-2 ring-indigo-400"
-                      : "bg-indigo-600/90 text-white hover:bg-indigo-500"
-                  }`}
+                  className="flex-1 text-xs"
                 >
                   {isSelected ? (
                     <>
-                      <CheckCircle className="h-3.5 w-3.5" /> Selected
+                      <CheckCircle className="h-3.5 w-3.5 mr-1" /> Selected
                     </>
                   ) : (
                     <>
-                      Select Path <ArrowRight className="h-3.5 w-3.5" />
+                      Select Path <ArrowRight className="h-3.5 w-3.5 ml-1" />
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </SpotlightCard>
           );

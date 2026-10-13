@@ -2,17 +2,20 @@
 
 import React, { useState } from "react";
 import { RoadmapTimelineProps, RoadmapTimelinePropsSchema } from "./registry";
-import { CheckCircle2, Circle, Calendar, ChevronRight, CheckSquare, Sparkles, RefreshCw } from "lucide-react";
+import { CheckCircle2, Circle, Calendar, CheckSquare } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { Badge } from "@/components/ui/badge";
 
 export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
   const result = RoadmapTimelinePropsSchema.safeParse(rawProps);
   const props = result.success ? result.data : rawProps;
 
-  const [phases, setPhases] = useState(props?.phases || []);
+  const initialPhases = Array.isArray(props?.phases) ? props.phases : [];
+  const [phases, setPhases] = useState(initialPhases);
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
 
   React.useEffect(() => {
-    if (props?.phases && props.phases.length > 0) {
+    if (props?.phases && Array.isArray(props.phases) && props.phases.length > 0) {
       setPhases(props.phases);
     }
   }, [props?.phases]);
@@ -27,10 +30,10 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
 
   const toggleItemStatus = async (phaseIdx: number, weekIdx: number, itemId: string) => {
     const newPhases = [...phases];
-    const currentStatus = newPhases[phaseIdx]?.weeks[weekIdx]?.status;
+    const currentStatus = newPhases[phaseIdx]?.weeks?.[weekIdx]?.status;
     const nextStatus = currentStatus === "COMPLETED" ? "TODO" : "COMPLETED";
 
-    if (newPhases[phaseIdx]?.weeks[weekIdx]) {
+    if (newPhases[phaseIdx]?.weeks?.[weekIdx]) {
       newPhases[phaseIdx]!.weeks[weekIdx]!.status = nextStatus;
       setPhases(newPhases);
     }
@@ -49,7 +52,10 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
   const activePhase = phases[activePhaseIndex] || phases[0];
 
   return (
-    <div className="my-6 rounded-2xl border border-neutral-800/80 bg-neutral-950/80 p-6 shadow-2xl backdrop-blur-md">
+    <SpotlightCard
+      spotlightColor="rgba(16, 185, 129, 0.12)"
+      className="my-6 border-neutral-800/80 bg-neutral-950/80 p-6 shadow-2xl backdrop-blur-md"
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800 pb-4 mb-5">
         <div>
@@ -57,8 +63,8 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
             <Calendar className="h-4 w-4" />
             12-Week Execution Roadmap
           </span>
-          <h3 className="text-lg font-bold text-white mt-0.5">{props.roadmapTitle}</h3>
-          <p className="text-xs text-neutral-400">Target Role: <strong className="text-neutral-200">{props.targetRole}</strong></p>
+          <h3 className="text-lg font-bold text-white mt-0.5">{props.roadmapTitle || "Career Roadmap"}</h3>
+          <p className="text-xs text-neutral-400">Target Role: <strong className="text-neutral-200">{props.targetRole || "Specialist"}</strong></p>
         </div>
       </div>
 
@@ -66,12 +72,13 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
       <div className="flex rounded-xl bg-neutral-900/80 p-1 border border-neutral-800 mb-6 overflow-x-auto">
         {phases.map((p, idx) => {
           const isActive = activePhaseIndex === idx;
-          const completedCount = p.weeks.filter((w) => w.status === "COMPLETED").length;
-          const totalCount = p.weeks.length;
+          const weeks = Array.isArray(p.weeks) ? p.weeks : [];
+          const completedCount = weeks.filter((w) => w.status === "COMPLETED").length;
+          const totalCount = weeks.length;
 
           return (
             <button
-              key={p.phase}
+              key={p.phase || idx}
               type="button"
               onClick={() => setActivePhaseIndex(idx)}
               className={`flex-1 min-w-[140px] rounded-lg px-3 py-2 text-xs font-medium transition-all text-center flex flex-col items-center gap-0.5 ${
@@ -98,14 +105,15 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
       )}
 
       {/* Weekly Items Timeline */}
-      {activePhase && (
+      {activePhase && Array.isArray(activePhase.weeks) && (
         <div className="space-y-4">
           {activePhase.weeks.map((week, weekIdx) => {
             const isCompleted = week.status === "COMPLETED";
+            const deliverables = Array.isArray(week.deliverables) ? week.deliverables : [];
 
             return (
               <div
-                key={week.id || week.weekNumber}
+                key={week.id || week.weekNumber || weekIdx}
                 className={`rounded-xl border p-4 transition-all ${
                   isCompleted
                     ? "border-emerald-500/30 bg-emerald-950/10"
@@ -129,9 +137,9 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
 
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="rounded bg-neutral-800 px-2 py-0.5 text-[10px] font-bold text-neutral-300">
+                        <Badge variant="secondary" className="text-[10px] font-bold">
                           Week {week.weekNumber}
-                        </span>
+                        </Badge>
                         <h5 className={`text-sm font-semibold ${isCompleted ? "text-neutral-400 line-through" : "text-white"}`}>
                           {week.title}
                         </h5>
@@ -139,13 +147,13 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
                       <p className="text-xs text-neutral-300 mt-1 leading-relaxed">{week.description}</p>
 
                       {/* Concrete Deliverables */}
-                      {week.deliverables.length > 0 && (
+                      {deliverables.length > 0 && (
                         <div className="mt-3">
                           <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider block mb-1">
                             Concrete Deliverables:
                           </span>
                           <ul className="space-y-1">
-                            {week.deliverables.map((del, dIdx) => (
+                            {deliverables.map((del, dIdx) => (
                               <li key={dIdx} className="text-xs text-neutral-300 flex items-center gap-1.5">
                                 <CheckSquare className="h-3 w-3 text-indigo-400 shrink-0" />
                                 <span>{del}</span>
@@ -162,6 +170,6 @@ export function RoadmapTimeline(rawProps: RoadmapTimelineProps) {
           })}
         </div>
       )}
-    </div>
+    </SpotlightCard>
   );
 }

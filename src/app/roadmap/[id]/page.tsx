@@ -6,9 +6,18 @@ import { PortfolioProjectCard } from "@/components/tambo/PortfolioProjectCard";
 import { ResourceList } from "@/components/tambo/ResourceList";
 import { ExportRoadmapButton } from "@/components/tambo/ExportRoadmapButton";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Sparkles } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export const dynamic = "force-dynamic";
+
+function safeJsonParse<T>(input: string, fallback: T): T {
+  try {
+    return JSON.parse(input);
+  } catch {
+    return fallback;
+  }
+}
 
 export default async function RoadmapDetailPage({
   params,
@@ -46,7 +55,8 @@ export default async function RoadmapDetailPage({
         weekNumber: w.weekNumber,
         title: w.title,
         description: w.description,
-        deliverables: JSON.parse(w.deliverables) as string[],
+        deliverables: safeJsonParse<string[]>(w.deliverables, []),
+        resources: safeJsonParse<string[]>(w.resources || "[]", []),
         status: w.status as "TODO" | "IN_PROGRESS" | "COMPLETED",
       })),
     },
@@ -59,7 +69,8 @@ export default async function RoadmapDetailPage({
         weekNumber: w.weekNumber,
         title: w.title,
         description: w.description,
-        deliverables: JSON.parse(w.deliverables) as string[],
+        deliverables: safeJsonParse<string[]>(w.deliverables, []),
+        resources: safeJsonParse<string[]>(w.resources || "[]", []),
         status: w.status as "TODO" | "IN_PROGRESS" | "COMPLETED",
       })),
     },
@@ -72,7 +83,8 @@ export default async function RoadmapDetailPage({
         weekNumber: w.weekNumber,
         title: w.title,
         description: w.description,
-        deliverables: JSON.parse(w.deliverables) as string[],
+        deliverables: safeJsonParse<string[]>(w.deliverables, []),
+        resources: safeJsonParse<string[]>(w.resources || "[]", []),
         status: w.status as "TODO" | "IN_PROGRESS" | "COMPLETED",
       })),
     },
@@ -94,12 +106,12 @@ export default async function RoadmapDetailPage({
       </div>
 
       {/* Hero Card */}
-      <div className="rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 sm:p-8 backdrop-blur-md">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-4 mb-4">
+      <div className="rounded-3xl border border-white/[0.08] bg-neutral-900/60 p-6 sm:p-8 backdrop-blur-md">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-4">
           <div>
-            <span className="rounded bg-indigo-950/60 border border-indigo-500/30 px-2.5 py-1 text-xs font-semibold text-indigo-300">
+            <Badge variant="purple" className="text-xs font-semibold">
               Role Focus: {roadmap.targetRole}
-            </span>
+            </Badge>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-2">{roadmap.title}</h1>
           </div>
           <span className="text-xs font-mono text-neutral-400">{roadmap.totalDurationWeeks} Weeks Strategy</span>
@@ -117,12 +129,12 @@ export default async function RoadmapDetailPage({
           projectId={project.id}
           title={project.title}
           goal={project.goal}
-          features={JSON.parse(project.features) as string[]}
-          techStack={JSON.parse(project.techStack) as string[]}
+          features={safeJsonParse<string[]>(project.features, [])}
+          techStack={safeJsonParse<string[]>(project.techStack, [])}
           timelineWeeks={project.timelineWeeks}
           difficulty={project.difficulty}
           whyFitReason={project.whyFitReason}
-          starterMilestones={JSON.parse(project.starterMilestones)}
+          starterMilestones={safeJsonParse<any[]>(project.starterMilestones, [])}
         />
       )}
 
@@ -144,7 +156,7 @@ export default async function RoadmapDetailPage({
             description: r.description,
             isFree: r.isFree,
             tier: r.tier,
-            tags: JSON.parse(r.tags) as string[],
+            tags: safeJsonParse<string[]>(r.tags, []),
           }))}
           title="Curated Free Resources & Communities for this Roadmap"
         />

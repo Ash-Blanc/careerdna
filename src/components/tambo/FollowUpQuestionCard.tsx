@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { FollowUpQuestionCardProps, FollowUpQuestionCardPropsSchema } from "./registry";
 import { HelpCircle, Send, Sparkles } from "lucide-react";
 import { useTamboHost } from "./TamboHostProvider";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function FollowUpQuestionCard(rawProps: FollowUpQuestionCardProps) {
   const result = FollowUpQuestionCardPropsSchema.safeParse(rawProps);
@@ -15,6 +18,8 @@ export function FollowUpQuestionCard(rawProps: FollowUpQuestionCardProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
 
   if (!props) return null;
+
+  const options = Array.isArray(props?.options) ? props.options : [];
 
   const handleSelectOption = (option: { id: string; text: string }) => {
     if (answered) return;
@@ -32,7 +37,10 @@ export function FollowUpQuestionCard(rawProps: FollowUpQuestionCardProps) {
   };
 
   return (
-    <div className="my-5 rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 via-neutral-900 to-neutral-950 p-5 shadow-xl backdrop-blur-md">
+    <SpotlightCard
+      spotlightColor="rgba(99, 102, 241, 0.2)"
+      className="my-5 border-indigo-500/30 bg-gradient-to-b from-indigo-950/20 via-neutral-900 to-neutral-950 p-5 shadow-xl backdrop-blur-md"
+    >
       {/* Context Badge & Question */}
       <div className="flex items-start gap-3 mb-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0">
@@ -50,7 +58,7 @@ export function FollowUpQuestionCard(rawProps: FollowUpQuestionCardProps) {
 
       {/* Selectable Answer Chips */}
       <div className="flex flex-col gap-2 mt-4">
-        {props.options.map((opt) => {
+        {options.map((opt) => {
           const isChosen = selectedOptionId === opt.id;
 
           return (
@@ -77,22 +85,23 @@ export function FollowUpQuestionCard(rawProps: FollowUpQuestionCardProps) {
       {/* Free Text Input (if allowed) */}
       {props.allowCustom && !answered && (
         <form onSubmit={handleCustomSubmit} className="mt-3.5 flex gap-2">
-          <input
+          <Input
             type="text"
             value={customText}
             onChange={(e) => setCustomText(e.target.value)}
             placeholder="Or share custom thought..."
-            className="flex-1 rounded-xl border border-neutral-800 bg-neutral-950 px-3.5 py-2 text-xs text-white placeholder-neutral-500 focus:border-indigo-500 focus:outline-none"
+            className="flex-1 text-xs"
           />
-          <button
+          <Button
             type="submit"
             disabled={!customText.trim()}
-            className="flex items-center gap-1.5 rounded-xl bg-neutral-800 px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:bg-indigo-600 hover:text-white disabled:opacity-40 transition-all"
+            size="sm"
+            className="flex items-center gap-1.5"
           >
-            <Send className="h-3 w-3" />
-          </button>
+            <Send className="h-3.5 w-3.5" />
+          </Button>
         </form>
       )}
-    </div>
+    </SpotlightCard>
   );
 }

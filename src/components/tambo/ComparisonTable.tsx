@@ -3,16 +3,21 @@
 import React from "react";
 import { ComparisonTableProps, ComparisonTablePropsSchema } from "./registry";
 import { Table, Flame } from "lucide-react";
+import { SpotlightCard } from "@/components/ui/21st/SpotlightCard";
+import { Badge } from "@/components/ui/badge";
 
 export function ComparisonTable(rawProps: ComparisonTableProps) {
   const result = ComparisonTablePropsSchema.safeParse(rawProps);
   const props = result.success ? result.data : rawProps;
 
-  const careers = props?.careers || [];
+  const careers = Array.isArray(props?.careers) ? props.careers : [];
   if (careers.length === 0) return null;
 
   return (
-    <div className="my-6 rounded-2xl border border-neutral-800 bg-neutral-950/90 p-5 shadow-2xl backdrop-blur-md">
+    <SpotlightCard
+      spotlightColor="rgba(99, 102, 241, 0.12)"
+      className="my-6 border-neutral-800 bg-neutral-950/90 p-5 shadow-2xl backdrop-blur-md"
+    >
       <div className="flex items-center gap-2 border-b border-neutral-800 pb-3 mb-4">
         <Table className="h-4 w-4 text-indigo-400" />
         <h4 className="text-sm font-semibold text-white">Cross-Track Strategic Trade-offs</h4>
@@ -43,9 +48,9 @@ export function ComparisonTable(rawProps: ComparisonTableProps) {
                 </td>
                 <td className="py-3 px-3 text-neutral-300">{c.skillLeverage}</td>
                 <td className="py-3 px-3">
-                  <span className="rounded bg-neutral-800 px-2 py-0.5 text-[10px] text-neutral-300">
+                  <Badge variant="secondary" className="text-[10px]">
                     {c.marketDemand}
-                  </span>
+                  </Badge>
                 </td>
                 <td className="py-3 px-3 text-neutral-300">{c.learningCurve}</td>
                 <td className="py-3 px-3 text-emerald-400 font-medium">{c.compPotential}</td>
@@ -55,6 +60,6 @@ export function ComparisonTable(rawProps: ComparisonTableProps) {
           </tbody>
         </table>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }
